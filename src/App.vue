@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <h1>Welcome GBB Admin!</h1>
+  <component :is="$route.meta.layout || 'div'">
+    <router-view />
+  </component>
 </template>
