@@ -4,4 +4,5 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <h1>Welcome GBB Admin!</h1>
+  <router-view />
 </template>
