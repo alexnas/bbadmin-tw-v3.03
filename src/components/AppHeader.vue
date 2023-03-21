@@ -61,13 +61,13 @@ import { Icon } from '@iconify/vue'
               <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
               <router-link
                 to="/"
-                class="text-white rounded-md px-3 py-2 text-sm font-medium"
+                class="text-white hover:text-orange-400 hover:bg-gray-700 rounded-md px-3 py-2 text-sm font-medium"
                 aria-current="page"
                 >GBB Admin</router-link
               >
               <router-link
                 to="/about"
-                class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+                class="text-gray-300 hover:text-orange-400 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
                 >About</router-link
               >
             </div>
