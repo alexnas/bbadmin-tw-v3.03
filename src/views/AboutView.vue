@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <h1>The About Page</h1>
-    <p>
+  <div class="mx-auto px-2 mb-4 sm:px-6 lg:px-8 flex flex-col overflow-y-auto">
+    <h1 class="text-2xl font-semibold text-gray-700 my-4">The About Page</h1>
+    <p class="text-base text-justify mb-2">
       Nulla porttitor accumsan tincidunt. Sed porttitor lectus nibh. Curabitur non nulla sit amet
       nisl tempus convallis quis ac lectus. Vivamus suscipit tortor eget felis porttitor volutpat.
       Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Curabitur aliquet quam id dui
@@ -12,7 +12,7 @@
       erat, accumsan id imperdiet et, porttitor at sem. Nulla quis lorem ut libero malesuada
       feugiat. Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui.
     </p>
-    <p>
+    <p class="text-base text-justify mb-2">
       Nulla porttitor accumsan tincidunt. Sed porttitor lectus nibh. Curabitur non nulla sit amet
       nisl tempus convallis quis ac lectus. Vivamus suscipit tortor eget felis porttitor volutpat.
       Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Curabitur aliquet quam id dui
@@ -23,7 +23,7 @@
       erat, accumsan id imperdiet et, porttitor at sem. Nulla quis lorem ut libero malesuada
       feugiat. Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui.
     </p>
-    <p>
+    <p class="text-base text-justify mb-2">
       Nulla porttitor accumsan tincidunt. Sed porttitor lectus nibh. Curabitur non nulla sit amet
       nisl tempus convallis quis ac lectus. Vivamus suscipit tortor eget felis porttitor volutpat.
       Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Curabitur aliquet quam id dui
@@ -34,7 +34,7 @@
       erat, accumsan id imperdiet et, porttitor at sem. Nulla quis lorem ut libero malesuada
       feugiat. Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui.
     </p>
-    <p>
+    <p class="text-base text-justify mb-2">
       Nulla porttitor accumsan tincidunt. Sed porttitor lectus nibh. Curabitur non nulla sit amet
       nisl tempus convallis quis ac lectus. Vivamus suscipit tortor eget felis porttitor volutpat.
       Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Curabitur aliquet quam id dui
