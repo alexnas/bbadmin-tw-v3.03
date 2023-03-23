@@ -1,5 +1,28 @@
 <script setup lang="ts">
+import { ref, reactive } from 'vue'
 import { Icon } from '@iconify/vue'
+import { activeMenuItem, inactiveMenuItem } from '@/assets/twClasses'
+
+interface IFooterMenuItem {
+  name: string
+  label: string
+  path: string
+}
+
+let footerMenu: IFooterMenuItem[] = reactive([
+  {
+    name: 'Home',
+    label: 'GBB Admin',
+    path: '/'
+  },
+  {
+    name: 'About',
+    label: 'About GBB',
+    path: '/about'
+  }
+])
+const activeClass = ref(activeMenuItem)
+const inactiveClass = ref(inactiveMenuItem)
 </script>
 
 <template>
@@ -19,17 +42,13 @@ import { Icon } from '@iconify/vue'
             />
             2022-2023 GBB
           </router-link>
-          <div class="">
+          <div v-for="item in footerMenu" :key="`${item.name}`" class="">
             <div class="flex space-x-1">
               <router-link
-                to="/"
+                :to="item.path"
                 class="text-gray-400 hover:text-orange-400 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm"
-                >GBB Admin</router-link
-              >
-              <router-link
-                to="/"
-                class="text-gray-400 hover:text-orange-400 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm"
-                >About GBB</router-link
+                :class="[$route.name === item.name ? activeClass : inactiveClass]"
+                >{{ item.label }}</router-link
               >
             </div>
           </div>
