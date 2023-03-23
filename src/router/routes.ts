@@ -13,6 +13,12 @@ const routes: Array<RouteRecordRaw> = [
     name: 'About',
     component: () => import('../views/AboutView.vue'),
     meta: { layout: AdminLayout }
+  },
+  {
+    path: '/province',
+    name: 'Provinces',
+    component: () => import('../views/ProvincesView.vue'),
+    meta: { layout: AdminLayout }
   }
 ]
 
