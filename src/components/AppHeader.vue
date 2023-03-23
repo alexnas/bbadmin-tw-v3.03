@@ -1,5 +1,28 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import { ref, reactive } from 'vue'
+import { activeMenuItem, inactiveMenuItem } from '@/assets/twClasses'
+
+interface IHeaderMenuItem {
+  name: string
+  label: string
+  path: string
+}
+
+let headerMenu: IHeaderMenuItem[] = reactive([
+  {
+    name: 'Home',
+    label: 'Home',
+    path: '/'
+  },
+  {
+    name: 'About',
+    label: 'About',
+    path: '/about'
+  }
+])
+const activeClass = ref(activeMenuItem)
+const inactiveClass = ref(inactiveMenuItem)
 </script>
 
 <template>
@@ -58,19 +81,24 @@ import { Icon } from '@iconify/vue'
           </div>
           <div class="hidden sm:ml-6 sm:block">
             <div class="flex space-x-4">
-              <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
               <router-link
                 to="/"
                 class="text-white hover:text-orange-400 hover:bg-gray-700 rounded-md px-3 py-2 text-sm font-medium"
                 aria-current="page"
                 >GBB Admin</router-link
               >
-              <router-link
-                to="/about"
-                class="text-gray-300 hover:text-orange-400 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-                >About</router-link
-              >
             </div>
+          </div>
+        </div>
+        <div v-for="item in headerMenu" :key="`${item.name}`" class="hidden sm:ml-6 sm:block">
+          <div class="flex space-x-4">
+            <router-link
+              class="text-gray-300 hover:text-orange-400 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+              :class="[$route.name === item.name ? activeClass : inactiveClass]"
+              aria-current="page"
+              :to="item.path"
+              >{{ item.label }}</router-link
+            >
           </div>
         </div>
 
@@ -101,19 +129,14 @@ import { Icon } from '@iconify/vue'
     </div>
 
     <!-- Mobile menu, show/hide based on menu state. -->
-    <div class="sm:hidden" id="mobile-menu">
+    <div v-for="item in headerMenu" :key="`${item.name}`" class="sm:hidden" id="mobile-menu">
       <div class="space-y-1 px-2 pt-2 pb-3">
-        <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-        <a
-          href="#"
-          class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"
-          aria-current="page"
-          >Dashboard</a
-        >
-        <a
-          href="#"
+        <router-link
+          :to="item.path"
           class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
-          >About</a
+          :class="[$route.name === item.name ? activeClass : inactiveClass]"
+          aria-current="page"
+          >{{ item.label }}</router-link
         >
       </div>
     </div>

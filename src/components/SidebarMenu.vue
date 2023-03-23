@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { Icon } from '@iconify/vue'
+import { activeMenuItem, inactiveMenuItem } from '@/assets/twClasses'
 
 interface ISideMenuItem {
   name: string
@@ -21,8 +22,8 @@ let sideMenu: ISideMenuItem[] = reactive([
   }
 ])
 
-const activeClass = ref('border-orange-400 text-orange-400 ')
-const inactiveClass = ref('border-gray-900 text-gray-400 hover:text-gray-100')
+const activeClass = ref(activeMenuItem)
+const inactiveClass = ref(inactiveMenuItem)
 </script>
 
 <template>
