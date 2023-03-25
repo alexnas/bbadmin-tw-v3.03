@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { storeToRefs } from 'pinia'
 import { Icon } from '@iconify/vue'
-import axios from 'axios'
-import type { IProvince } from '@/types'
+import { useProvinceStore } from '@/stores/province'
 
-const provinceApi = 'http://localhost:5000/api/province'
+const provinceStore = useProvinceStore()
+const { provinces } = storeToRefs(provinceStore)
+
 const pageTitle = 'Provinces List'
-const provinces = ref<IProvince[]>([])
 
 const handleAddNewClick = () => {
   console.log('Add New')
@@ -19,19 +19,6 @@ const handleDeleteClick = ({ id, name }: { id: number; name: string }) => {
   const result = confirm(`Are you sure to delete all data for the province: ${name}, ID=${id}?`)
   console.log('delete', id, name)
 }
-
-onMounted(async () => {
-  try {
-    const { data } = await axios.get(provinceApi)
-    provinces.value = data
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.log('Error', error.message)
-    } else {
-      console.log('Error', error)
-    }
-  }
-})
 </script>
 
 <style lang="scss" scoped></style>
