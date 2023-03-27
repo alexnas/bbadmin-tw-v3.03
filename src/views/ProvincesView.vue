@@ -6,6 +6,7 @@ import { Icon } from '@iconify/vue'
 import { useProvinceStore } from '@/stores/province'
 import BaseModal from '@/components/BaseModal.vue'
 import type { IProvince } from '@/types'
+import { formatDateTime } from '@/tools/formatDate'
 
 const provinceApi = 'http://localhost:5000/api/province'
 
@@ -150,8 +151,8 @@ const handleSubmitForm = async () => {
             <td class="px-4 py-3">{{ province.id }}</td>
             <td class="px-4 py-3">{{ province.name }}</td>
             <td class="px-4 py-3">{{ province.description }}</td>
-            <td class="px-4 py-3">{{ province.createdAt }}</td>
-            <td class="px-4 py-3">{{ province.updatedAt }}</td>
+            <td class="px-4 py-3">{{ formatDateTime(province.createdAt) }}</td>
+            <td class="px-4 py-3">{{ formatDateTime(province.updatedAt) }}</td>
             <td class="px-4 py-3 flex">
               <button
                 @click.stop="handleEditClick(province)"
@@ -215,7 +216,7 @@ const handleSubmitForm = async () => {
         >
         <input
           id="name"
-          :value="checkedProvince.createdAt"
+          :value="formatDateTime(checkedProvince.createdAt)"
           :class="{ hidden: isNew }"
           readonly
           class="mb-5 mt-2 read-only:bg-gray-100 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
@@ -230,7 +231,7 @@ const handleSubmitForm = async () => {
         >
         <input
           id="name"
-          :value="checkedProvince.updatedAt"
+          :value="formatDateTime(checkedProvince.updatedAt)"
           :class="{ hidden: isNew }"
           readonly
           class="mb-5 mt-2 read-only:bg-gray-100 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
