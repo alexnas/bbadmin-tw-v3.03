@@ -209,30 +209,30 @@ const handleSubmitForm = async () => {
         />
 
         <label
+          v-if="!isNew"
           for="name"
-          :class="{ hidden: isNew }"
           class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
           >Created</label
         >
         <input
+          v-if="!isNew"
           id="name"
           :value="formatDateTime(checkedProvince.createdAt)"
-          :class="{ hidden: isNew }"
           readonly
           class="mb-5 mt-2 read-only:bg-gray-100 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           placeholder="Date of creation"
         />
 
         <label
+          v-if="!isNew"
           for="name"
-          :class="{ hidden: isNew }"
           class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
           >Updated</label
         >
         <input
           id="name"
+          v-if="!isNew"
           :value="formatDateTime(checkedProvince.updatedAt)"
-          :class="{ hidden: isNew }"
           readonly
           class="mb-5 mt-2 read-only:bg-gray-100 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           placeholder="Date of update"
