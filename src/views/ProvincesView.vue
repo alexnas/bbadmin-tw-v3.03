@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
 import { storeToRefs } from 'pinia'
-import axios from 'axios'
 import { Icon } from '@iconify/vue'
 import { useProvinceStore } from '@/stores/province'
 import BaseModal from '@/components/BaseModal.vue'
 import type { IProvince } from '@/types'
 import { formatDateTime } from '@/tools/formatDate'
 
-const provinceApi = 'http://localhost:5000/api/province'
+const provinceStore = useProvinceStore()
+const { provinces } = storeToRefs(provinceStore)
 
 const newProvince = reactive<IProvince>({
   id: -1,
@@ -27,9 +27,6 @@ const modalTitle = computed(() => {
     ? 'New Province'
     : `Province: ${checkedProvince.name} (id: ${checkedProvince.id})`
 })
-
-const provinceStore = useProvinceStore()
-const { provinces } = storeToRefs(provinceStore)
 
 const pageTitle = 'Provinces List'
 
@@ -60,47 +57,11 @@ const handleDeleteClick = ({ id, name }: { id: number; name: string }) => {
   console.log('delete', id, name)
 }
 
-const createNewProvince = async () => {
-  const params = {
-    name: checkedProvince.name,
-    description: checkedProvince.description
-  }
-  try {
-    const { data } = await axios.post(provinceApi, params)
-    checkedProvince = data
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.log('Error', error.message)
-    } else {
-      console.log('Error', error)
-    }
-  }
-}
-
-const updateProvince = async () => {
-  const id = checkedProvince.id
-  const params = {
-    id: id,
-    name: checkedProvince.name,
-    description: checkedProvince.description
-  }
-  try {
-    const { data } = await axios.put(`${provinceApi}/${id}`, params)
-    checkedProvince = data
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.log('Error', error.message)
-    } else {
-      console.log('Error', error)
-    }
-  }
-}
-
 const handleSubmitForm = async () => {
   if (isNew.value) {
-    await createNewProvince()
+    await provinceStore.createProfince(checkedProvince)
   } else {
-    await updateProvince()
+    await provinceStore.updateProfince(checkedProvince)
   }
   isNew.value = true
   toggleModal()

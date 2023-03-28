@@ -13,7 +13,6 @@ export const useProvinceStore = defineStore('provinces', () => {
   const error = ref<string | null>(null)
 
   const getProfinces = async () => {
-    console.log('provinces in Pinia', provinces.value)
     try {
       loading.value = true
       const { data } = await axios.get(provinceApi)
@@ -32,9 +31,79 @@ export const useProvinceStore = defineStore('provinces', () => {
     }
   }
 
+  const createProfince = async (provinceItem: IProvince) => {
+    const idx = provinces.value.findIndex((item) => item.name === provinceItem.name)
+    if (idx >= 0) {
+      console.log(`Error: There is already such province instance with name=${provinceItem.name}`)
+      throw Error(`There is already such province instance with name=${provinceItem.name}`)
+    }
+
+    const params = {
+      name: provinceItem.name,
+      description: provinceItem.description
+    }
+
+    try {
+      loading.value = true
+      const { data } = await axios.post(provinceApi, params)
+      provinces.value.push(data)
+      loading.value = false
+      error.value = null
+    } catch (err: any) {
+      loading.value = false
+      if (axios.isAxiosError(error)) {
+        error.value = err.message
+        console.log('Error', err.message)
+      } else {
+        error.value = 'Unexpected error encountered'
+        console.log('Error', err)
+      }
+    }
+  }
+
+  const updateProfince = async (provinceItem: IProvince) => {
+    const id = provinceItem.id
+    const idx = provinces.value.findIndex((item) => item.id === id)
+    if (idx < 0) {
+      console.log(`Error: There is no such province instance with id=${id}`)
+      throw Error(`There is no such province instance with id=${id}`)
+    }
+
+    const params = {
+      id: id,
+      name: provinceItem.name,
+      description: provinceItem.description
+    }
+
+    try {
+      loading.value = true
+      const { data } = await axios.put(`${provinceApi}/${id}`, params)
+      provinces.value[idx] = data
+      loading.value = false
+      error.value = null
+    } catch (err: any) {
+      loading.value = false
+      if (axios.isAxiosError(error)) {
+        error.value = err.message
+        console.log('Error', err.message)
+      } else {
+        error.value = 'Unexpected error encountered'
+        console.log('Error', err)
+      }
+    }
+  }
+
   onMounted(async () => {
     await getProfinces()
   })
 
-  return { provinces, currentProvince, loading, error, getProfinces }
+  return {
+    provinces,
+    currentProvince,
+    loading,
+    error,
+    getProfinces,
+    createProfince,
+    updateProfince
+  }
 })
