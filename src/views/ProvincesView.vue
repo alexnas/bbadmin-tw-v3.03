@@ -52,9 +52,13 @@ const handleEditClick = (province: IProvince) => {
   toggleModal()
 }
 
-const handleDeleteClick = ({ id, name }: { id: number; name: string }) => {
-  const result = confirm(`Are you sure to delete all data for the province: ${name}, ID=${id}?`)
-  console.log('delete', id, name)
+const handleDeleteClick = async (province: IProvince) => {
+  const { id, name } = province
+  const confirmed = confirm(`Are you sure to delete all data for the province: ${name}, ID=${id}?`)
+  if (confirmed) {
+    await provinceStore.deleteProfince(province)
+  }
+  resetModalContants()
 }
 
 const handleSubmitForm = async () => {
@@ -123,7 +127,7 @@ const handleSubmitForm = async () => {
                 EDIT
               </button>
               <button
-                @click.stop="handleDeleteClick({ id: province.id, name: province.name })"
+                @click.stop="handleDeleteClick(province)"
                 type="button"
                 class="font-medium text-rose-300 hover:no-underline hover:text-rose-600 dark:text-red-500 hover:underline"
               >

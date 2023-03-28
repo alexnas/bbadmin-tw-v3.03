@@ -64,7 +64,7 @@ export const useProvinceStore = defineStore('provinces', () => {
   const updateProfince = async (provinceItem: IProvince) => {
     const id = provinceItem.id
     const idx = provinces.value.findIndex((item) => item.id === id)
-    if (idx < 0) {
+    if (idx === -1) {
       console.log(`Error: There is no such province instance with id=${id}`)
       throw Error(`There is no such province instance with id=${id}`)
     }
@@ -93,6 +93,32 @@ export const useProvinceStore = defineStore('provinces', () => {
     }
   }
 
+  const deleteProfince = async (provinceItem: IProvince) => {
+    const id = provinceItem.id
+    const idx = provinces.value.findIndex((item) => item.id === id)
+    if (idx === -1) {
+      console.log(`Error: There is no such province instance with id=${id}`)
+      throw Error(`There is no such province instance with id=${id}`)
+    }
+
+    try {
+      loading.value = true
+      await axios.delete(`${provinceApi}/${id}`)
+      provinces.value = provinces.value.filter((item) => item.id !== id)
+      loading.value = false
+      error.value = null
+    } catch (err: any) {
+      loading.value = false
+      if (axios.isAxiosError(error)) {
+        error.value = err.message
+        console.log('Error', err.message)
+      } else {
+        error.value = 'Unexpected error encountered'
+        console.log('Error', err)
+      }
+    }
+  }
+
   onMounted(async () => {
     await getProfinces()
   })
@@ -104,6 +130,7 @@ export const useProvinceStore = defineStore('provinces', () => {
     error,
     getProfinces,
     createProfince,
-    updateProfince
+    updateProfince,
+    deleteProfince
   }
 })
