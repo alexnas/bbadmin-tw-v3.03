@@ -10,17 +10,17 @@ import { formatDateTime } from '@/tools/formatDate'
 const provinceStore = useProvinceStore()
 const { provinces } = storeToRefs(provinceStore)
 
-const newProvince = reactive<IProvince>({
+const initProvince: IProvince = {
   id: -1,
   name: '',
   description: '',
   createdAt: '',
   updatedAt: ''
-})
+}
 
 let isModalActive = ref<boolean>(false)
 let isNew = ref<boolean>(true)
-let checkedProvince = reactive<IProvince>(newProvince)
+let checkedProvince = reactive<IProvince>({ ...initProvince })
 
 const modalTitle = computed(() => {
   return isNew.value
@@ -32,7 +32,7 @@ const pageTitle = 'Provinces List'
 
 const resetModalContants = () => {
   isNew.value = true
-  checkedProvince = newProvince
+  checkedProvince = { ...initProvince }
 }
 
 const toggleModal = () => {
