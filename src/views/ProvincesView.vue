@@ -1,26 +1,26 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
 import { storeToRefs } from 'pinia'
-import axios from 'axios'
 import { Icon } from '@iconify/vue'
 import { useProvinceStore } from '@/stores/province'
 import BaseModal from '@/components/BaseModal.vue'
 import type { IProvince } from '@/types'
 import { formatDateTime } from '@/tools/formatDate'
 
-const provinceApi = 'http://localhost:5000/api/province'
+const provinceStore = useProvinceStore()
+const { provinces } = storeToRefs(provinceStore)
 
-const newProvince = reactive<IProvince>({
+const initProvince: IProvince = {
   id: -1,
   name: '',
   description: '',
   createdAt: '',
   updatedAt: ''
-})
+}
 
 let isModalActive = ref<boolean>(false)
 let isNew = ref<boolean>(true)
-let checkedProvince = reactive<IProvince>(newProvince)
+let checkedProvince = reactive<IProvince>({ ...initProvince })
 
 const modalTitle = computed(() => {
   return isNew.value
@@ -28,14 +28,11 @@ const modalTitle = computed(() => {
     : `Province: ${checkedProvince.name} (id: ${checkedProvince.id})`
 })
 
-const provinceStore = useProvinceStore()
-const { provinces } = storeToRefs(provinceStore)
-
 const pageTitle = 'Provinces List'
 
 const resetModalContants = () => {
   isNew.value = true
-  checkedProvince = newProvince
+  checkedProvince = { ...initProvince }
 }
 
 const toggleModal = () => {
@@ -55,52 +52,20 @@ const handleEditClick = (province: IProvince) => {
   toggleModal()
 }
 
-const handleDeleteClick = ({ id, name }: { id: number; name: string }) => {
-  const result = confirm(`Are you sure to delete all data for the province: ${name}, ID=${id}?`)
-  console.log('delete', id, name)
-}
-
-const createNewProvince = async () => {
-  const params = {
-    name: checkedProvince.name,
-    description: checkedProvince.description
+const handleDeleteClick = async (province: IProvince) => {
+  const { id, name } = province
+  const confirmed = confirm(`Are you sure to delete all data for the province: ${name}, ID=${id}?`)
+  if (confirmed) {
+    await provinceStore.deleteProfince(province)
   }
-  try {
-    const { data } = await axios.post(provinceApi, params)
-    checkedProvince = data
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.log('Error', error.message)
-    } else {
-      console.log('Error', error)
-    }
-  }
-}
-
-const updateProvince = async () => {
-  const id = checkedProvince.id
-  const params = {
-    id: id,
-    name: checkedProvince.name,
-    description: checkedProvince.description
-  }
-  try {
-    const { data } = await axios.put(`${provinceApi}/${id}`, params)
-    checkedProvince = data
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.log('Error', error.message)
-    } else {
-      console.log('Error', error)
-    }
-  }
+  resetModalContants()
 }
 
 const handleSubmitForm = async () => {
   if (isNew.value) {
-    await createNewProvince()
+    await provinceStore.createProfince(checkedProvince)
   } else {
-    await updateProvince()
+    await provinceStore.updateProfince(checkedProvince)
   }
   isNew.value = true
   toggleModal()
@@ -162,7 +127,7 @@ const handleSubmitForm = async () => {
                 EDIT
               </button>
               <button
-                @click.stop="handleDeleteClick({ id: province.id, name: province.name })"
+                @click.stop="handleDeleteClick(province)"
                 type="button"
                 class="font-medium text-rose-300 hover:no-underline hover:text-rose-600 dark:text-red-500 hover:underline"
               >
@@ -209,30 +174,30 @@ const handleSubmitForm = async () => {
         />
 
         <label
+          v-if="!isNew"
           for="name"
-          :class="{ hidden: isNew }"
           class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
           >Created</label
         >
         <input
+          v-if="!isNew"
           id="name"
           :value="formatDateTime(checkedProvince.createdAt)"
-          :class="{ hidden: isNew }"
           readonly
           class="mb-5 mt-2 read-only:bg-gray-100 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           placeholder="Date of creation"
         />
 
         <label
+          v-if="!isNew"
           for="name"
-          :class="{ hidden: isNew }"
           class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
           >Updated</label
         >
         <input
           id="name"
+          v-if="!isNew"
           :value="formatDateTime(checkedProvince.updatedAt)"
-          :class="{ hidden: isNew }"
           readonly
           class="mb-5 mt-2 read-only:bg-gray-100 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           placeholder="Date of update"
