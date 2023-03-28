@@ -30,26 +30,29 @@ const modalTitle = computed(() => {
 
 const pageTitle = 'Provinces List'
 
-const resetModalContants = () => {
+const resetForm = () => {
+  isModalActive.value = false
   isNew.value = true
   checkedProvince = { ...initProvince }
 }
 
-const toggleModal = () => {
-  isModalActive.value = !isModalActive.value
-  if (!isModalActive.value) {
-    resetModalContants()
-  }
+const openModal = () => {
+  isModalActive.value = true
+}
+
+const closeModal = () => {
+  isModalActive.value = false
+  resetForm()
 }
 
 const handleAddNewClick = () => {
-  toggleModal()
+  openModal()
 }
 
 const handleEditClick = (province: IProvince) => {
   isNew.value = false
   checkedProvince = province
-  toggleModal()
+  openModal()
 }
 
 const handleDeleteClick = async (province: IProvince) => {
@@ -58,7 +61,7 @@ const handleDeleteClick = async (province: IProvince) => {
   if (confirmed) {
     await provinceStore.deleteProfince(province)
   }
-  resetModalContants()
+  resetForm()
 }
 
 const handleSubmitForm = async () => {
@@ -67,8 +70,7 @@ const handleSubmitForm = async () => {
   } else {
     await provinceStore.updateProfince(checkedProvince)
   }
-  isNew.value = true
-  toggleModal()
+  closeModal()
 }
 </script>
 
@@ -144,7 +146,7 @@ const handleSubmitForm = async () => {
       :modalTitle="modalTitle"
       :isModalActive="isModalActive"
       @submit-form="handleSubmitForm"
-      @closeModal="toggleModal"
+      @closeModal="closeModal"
     >
       <form
         class="relative py-4 px-5 my-8 md:px-10 bg-gray-50 border border-gray-200 shadow-md rounded"
