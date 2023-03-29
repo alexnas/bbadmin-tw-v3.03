@@ -1,19 +1,10 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
+import { useModalStore } from '@/stores/modal'
 defineEmits(['close-modal', 'submit-form', 'on-edit-item'])
-defineProps({
-  modalTitle: {
-    type: String,
-    default: 'Modal Card'
-  },
-  isModalActive: {
-    type: Boolean,
-    default: false
-  },
-  isViewItem: {
-    type: Boolean,
-    default: false
-  }
-})
+
+const modalStore = useModalStore()
+const { isModalActive, isViewItem, modalTitle } = storeToRefs(modalStore)
 </script>
 
 <template>
