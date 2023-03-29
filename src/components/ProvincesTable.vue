@@ -1,40 +1,29 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { Icon } from '@iconify/vue'
 import { useProvinceStore } from '@/stores/province'
 import BaseModal from '@/components/BaseModal.vue'
 import type { IProvince } from '@/types'
 import { formatDateTime } from '@/tools/formatDate'
-// import TableViewContainer from './TableViewContainer.vue'
 
 const provinceStore = useProvinceStore()
-const { provinces } = storeToRefs(provinceStore)
-
-const initProvince: IProvince = {
-  id: -1,
-  name: '',
-  description: '',
-  createdAt: '',
-  updatedAt: ''
-}
+const { provinces, currentProvince } = storeToRefs(provinceStore)
 
 let isModalActive = ref<boolean>(false)
 let isNew = ref<boolean>(true)
-let checkedProvince = reactive<IProvince>({ ...initProvince })
+provinceStore.resetCurrentProvince()
 
 const modalTitle = computed(() => {
   return isNew.value
     ? 'New Province'
-    : `Province: ${checkedProvince.name} (id: ${checkedProvince.id})`
+    : `Province: ${currentProvince.value.name} (id: ${currentProvince.value.id})`
 })
-
-const pageTitle = 'Provinces List'
 
 const resetForm = () => {
   isModalActive.value = false
   isNew.value = true
-  checkedProvince = { ...initProvince }
+  provinceStore.resetCurrentProvince()
 }
 
 const openModal = () => {
@@ -52,7 +41,7 @@ const handleAddNewClick = () => {
 
 const handleEditClick = (province: IProvince) => {
   isNew.value = false
-  checkedProvince = province
+  provinceStore.setCurrentProvince(province)
   openModal()
 }
 
@@ -67,16 +56,15 @@ const handleDeleteClick = async (province: IProvince) => {
 
 const handleSubmitForm = async () => {
   if (isNew.value) {
-    await provinceStore.createProfince(checkedProvince)
+    await provinceStore.createProfince(currentProvince.value)
   } else {
-    await provinceStore.updateProfince(checkedProvince)
+    await provinceStore.updateProfince(currentProvince.value)
   }
   closeModal()
 }
 </script>
 
 <template>
-  <!-- <table-view-container :pageTitle="pageTitle"> -->
   <div class="flex items-center justify-end -mt-6">
     <button @click.stop="handleAddNewClick()" type="button">
       <Icon
@@ -152,7 +140,7 @@ const handleSubmitForm = async () => {
       >
       <input
         id="name"
-        v-model="checkedProvince.name"
+        v-model="currentProvince.name"
         class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
         placeholder="Province name"
       />
@@ -164,7 +152,7 @@ const handleSubmitForm = async () => {
       >
       <input
         id="name"
-        v-model="checkedProvince.description"
+        v-model="currentProvince.description"
         class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
         placeholder="Province description"
       />
@@ -178,7 +166,7 @@ const handleSubmitForm = async () => {
       <input
         v-if="!isNew"
         id="name"
-        :value="formatDateTime(checkedProvince.createdAt)"
+        :value="formatDateTime(currentProvince.createdAt)"
         readonly
         class="mb-5 mt-2 read-only:bg-gray-100 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
         placeholder="Date of creation"
@@ -193,12 +181,11 @@ const handleSubmitForm = async () => {
       <input
         id="name"
         v-if="!isNew"
-        :value="formatDateTime(checkedProvince.updatedAt)"
+        :value="formatDateTime(currentProvince.updatedAt)"
         readonly
         class="mb-5 mt-2 read-only:bg-gray-100 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
         placeholder="Date of update"
       />
     </form>
   </base-modal>
-  <!-- </table-view-container> -->
 </template>
