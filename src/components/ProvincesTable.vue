@@ -6,6 +6,7 @@ import { useProvinceStore } from '@/stores/province'
 import { useModalStore } from '@/stores/modal'
 import type { IProvince } from '@/types'
 import { formatDateTime } from '@/tools/formatDate'
+import { cutText } from '@/tools/formatString'
 import ProvinceForm from '@/components/ProvinceForm.vue'
 
 const provinceStore = useProvinceStore()
@@ -75,7 +76,7 @@ const handleDeleteClick = async (province: IProvince) => {
           <td class="px-4 py-3">{{ idx + 1 }}</td>
           <td class="px-4 py-3">{{ province.id }}</td>
           <td class="px-4 py-3">{{ province.name }}</td>
-          <td class="px-4 py-3">{{ province.description }}</td>
+          <td class="px-4 py-3">{{ cutText(province.description, 50) }}</td>
           <td class="px-4 py-3">{{ formatDateTime(province.createdAt) }}</td>
           <td class="px-4 py-3">{{ formatDateTime(province.updatedAt) }}</td>
           <td class="px-4 py-3 flex">
