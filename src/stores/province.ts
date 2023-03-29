@@ -5,10 +5,17 @@ import axios from 'axios'
 import type { IProvince } from '@/types'
 
 const provinceApi = 'http://localhost:5000/api/province'
+const initProvince: IProvince = {
+  id: -1,
+  name: '',
+  description: '',
+  createdAt: '',
+  updatedAt: ''
+}
 
 export const useProvinceStore = defineStore('provinces', () => {
   const provinces = ref<IProvince[]>([])
-  const currentProvince = ref<IProvince | null>(null)
+  const currentProvince = ref<IProvince>({ ...initProvince })
   const loading = ref<boolean>(false)
   const error = ref<string | null>(null)
 
@@ -29,6 +36,16 @@ export const useProvinceStore = defineStore('provinces', () => {
         console.log('Error', err)
       }
     }
+  }
+
+  const resetCurrentProvince = () => {
+    currentProvince.value = { ...initProvince }
+    return currentProvince.value
+  }
+
+  const setCurrentProvince = (province: IProvince) => {
+    currentProvince.value = province
+    return currentProvince.value
   }
 
   const createProfince = async (provinceItem: IProvince) => {
@@ -131,6 +148,8 @@ export const useProvinceStore = defineStore('provinces', () => {
     getProfinces,
     createProfince,
     updateProfince,
-    deleteProfince
+    deleteProfince,
+    setCurrentProvince,
+    resetCurrentProvince
   }
 })
