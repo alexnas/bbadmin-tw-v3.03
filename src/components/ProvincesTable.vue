@@ -4,23 +4,17 @@ import { storeToRefs } from 'pinia'
 import { Icon } from '@iconify/vue'
 import { useProvinceStore } from '@/stores/province'
 import { useModalStore } from '@/stores/modal'
-import BaseModal from '@/components/BaseModal.vue'
 import type { IProvince } from '@/types'
 import { formatDateTime } from '@/tools/formatDate'
+import ProvinceForm from '@/components/ProvinceForm.vue'
 
 const provinceStore = useProvinceStore()
 const modalStore = useModalStore()
-const { provinces, currentProvince } = storeToRefs(provinceStore)
-const { isModalActive, isNewItem, isViewItem, modalTitle } = storeToRefs(modalStore)
+const { provinces } = storeToRefs(provinceStore)
 
 onMounted(() => {
   provinceStore.resetCurrentProvince()
 })
-
-const closeModal = () => {
-  provinceStore.resetCurrentProvince()
-  modalStore.resetModalState()
-}
 
 const handleAddNewClick = () => {
   modalStore.openNewItemModal()
@@ -43,16 +37,6 @@ const handleDeleteClick = async (province: IProvince) => {
     await provinceStore.deleteProfince(province)
   }
   modalStore.resetModalState()
-}
-
-const handleSubmitForm = async () => {
-  if (isNewItem.value) {
-    await provinceStore.createProfince(currentProvince.value)
-  } else {
-    await provinceStore.updateProfince(currentProvince.value)
-  }
-  modalStore.resetModalState()
-  provinceStore.resetCurrentProvince()
 }
 </script>
 
@@ -122,73 +106,6 @@ const handleSubmitForm = async () => {
     </table>
   </div>
 
-  <!-- Modal Component -->
-  <base-modal
-    :modalTitle="modalTitle"
-    :isModalActive="isModalActive"
-    :isViewItem="isViewItem"
-    @submit-form="handleSubmitForm"
-    @closeModal="closeModal"
-    @onEditItem="handleEditClick(currentProvince)"
-  >
-    <form
-      class="relative py-4 px-5 my-8 md:px-10 bg-gray-50 border border-gray-200 shadow-md rounded"
-    >
-      <label
-        for="name"
-        class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
-        >Name</label
-      >
-      <input
-        id="name"
-        v-model="currentProvince.name"
-        :disabled="isViewItem"
-        class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-        placeholder="Province name"
-      />
-
-      <label
-        for="name"
-        class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
-        >Description</label
-      >
-      <input
-        id="name"
-        v-model="currentProvince.description"
-        :disabled="isViewItem"
-        class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-        placeholder="Province description"
-      />
-
-      <label
-        v-if="!isNewItem"
-        for="name"
-        class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
-        >Created</label
-      >
-      <input
-        v-if="!isNewItem"
-        id="name"
-        :value="formatDateTime(currentProvince.createdAt)"
-        readonly
-        class="mb-5 mt-2 read-only:bg-gray-100 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-        placeholder="Date of creation"
-      />
-
-      <label
-        v-if="!isNewItem"
-        for="name"
-        class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
-        >Updated</label
-      >
-      <input
-        id="name"
-        v-if="!isNewItem"
-        :value="formatDateTime(currentProvince.updatedAt)"
-        readonly
-        class="mb-5 mt-2 read-only:bg-gray-100 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-        placeholder="Date of update"
-      />
-    </form>
-  </base-modal>
+  <!-- Province Modal Form -->
+  <ProvinceForm />
 </template>
