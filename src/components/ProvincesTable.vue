@@ -1,48 +1,38 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { Icon } from '@iconify/vue'
 import { useProvinceStore } from '@/stores/province'
+import { useModalStore } from '@/stores/modal'
 import BaseModal from '@/components/BaseModal.vue'
 import type { IProvince } from '@/types'
 import { formatDateTime } from '@/tools/formatDate'
 
 const provinceStore = useProvinceStore()
+const modalStore = useModalStore()
 const { provinces, currentProvince } = storeToRefs(provinceStore)
+const { isModalActive, isNewItem, isViewItem, modalTitle } = storeToRefs(modalStore)
 
-let isModalActive = ref<boolean>(false)
-let isNew = ref<boolean>(true)
-provinceStore.resetCurrentProvince()
-
-const modalTitle = computed(() => {
-  return isNew.value
-    ? 'New Province'
-    : `Province: ${currentProvince.value.name} (id: ${currentProvince.value.id})`
+onMounted(() => {
+  provinceStore.resetCurrentProvince()
 })
 
-const resetForm = () => {
-  isModalActive.value = false
-  isNew.value = true
-  provinceStore.resetCurrentProvince()
-}
-
-const openModal = () => {
-  isModalActive.value = true
-}
-
 const closeModal = () => {
-  isModalActive.value = false
-  resetForm()
+  provinceStore.resetCurrentProvince()
+  modalStore.resetModalState()
 }
 
 const handleAddNewClick = () => {
-  openModal()
+  modalStore.openNewItemModal()
+}
+
+const handleViewItemClick = () => {
+  modalStore.openViewItemModal()
 }
 
 const handleEditClick = (province: IProvince) => {
-  isNew.value = false
   provinceStore.setCurrentProvince(province)
-  openModal()
+  modalStore.openEditItemModal()
 }
 
 const handleDeleteClick = async (province: IProvince) => {
@@ -51,16 +41,17 @@ const handleDeleteClick = async (province: IProvince) => {
   if (confirmed) {
     await provinceStore.deleteProfince(province)
   }
-  resetForm()
+  modalStore.resetModalState()
 }
 
 const handleSubmitForm = async () => {
-  if (isNew.value) {
+  if (isNewItem.value) {
     await provinceStore.createProfince(currentProvince.value)
   } else {
     await provinceStore.updateProfince(currentProvince.value)
   }
-  closeModal()
+  modalStore.resetModalState()
+  provinceStore.resetCurrentProvince()
 }
 </script>
 
@@ -158,13 +149,13 @@ const handleSubmitForm = async () => {
       />
 
       <label
-        v-if="!isNew"
+        v-if="!isNewItem"
         for="name"
         class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
         >Created</label
       >
       <input
-        v-if="!isNew"
+        v-if="!isNewItem"
         id="name"
         :value="formatDateTime(currentProvince.createdAt)"
         readonly
@@ -173,14 +164,14 @@ const handleSubmitForm = async () => {
       />
 
       <label
-        v-if="!isNew"
+        v-if="!isNewItem"
         for="name"
         class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
         >Updated</label
       >
       <input
         id="name"
-        v-if="!isNew"
+        v-if="!isNewItem"
         :value="formatDateTime(currentProvince.updatedAt)"
         readonly
         class="mb-5 mt-2 read-only:bg-gray-100 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
