@@ -6,6 +6,7 @@ import { useProvinceStore } from '@/stores/province'
 import BaseModal from '@/components/BaseModal.vue'
 import type { IProvince } from '@/types'
 import { formatDateTime } from '@/tools/formatDate'
+import TableViewContainer from './TableViewContainer.vue'
 
 const provinceStore = useProvinceStore()
 const { provinces } = storeToRefs(provinceStore)
@@ -74,23 +75,16 @@ const handleSubmitForm = async () => {
 }
 </script>
 
-<style lang="scss" scoped></style>
-
 <template>
-  <div class="mx-auto px-2 mb-4 sm:px-6 lg:px-8 flex flex-col overflow-y-auto">
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-3xl font-semibold text-gray-700 my-6">{{ pageTitle }}</h1>
-      </div>
-      <div>
-        <button @click.stop="handleAddNewClick()" type="button">
-          <Icon
-            class="text-5xl text-green-400 hover:text-green-500"
-            icon="material-symbols:add-box-outline-rounded"
-            :inline="true"
-          />
-        </button>
-      </div>
+  <table-view-container :pageTitle="pageTitle">
+    <div class="flex items-center justify-end -mt-6">
+      <button @click.stop="handleAddNewClick()" type="button">
+        <Icon
+          class="text-5xl text-green-400 hover:text-green-500"
+          icon="material-symbols:add-box-outline-rounded"
+          :inline="true"
+        />
+      </button>
     </div>
 
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -206,5 +200,5 @@ const handleSubmitForm = async () => {
         />
       </form>
     </base-modal>
-  </div>
+  </table-view-container>
 </template>
