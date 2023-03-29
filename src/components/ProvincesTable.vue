@@ -26,7 +26,8 @@ const handleAddNewClick = () => {
   modalStore.openNewItemModal()
 }
 
-const handleViewItemClick = () => {
+const handleViewClick = (province: IProvince) => {
+  provinceStore.setCurrentProvince(province)
   modalStore.openViewItemModal()
 }
 
@@ -95,6 +96,13 @@ const handleSubmitForm = async () => {
           <td class="px-4 py-3">{{ formatDateTime(province.updatedAt) }}</td>
           <td class="px-4 py-3 flex">
             <button
+              @click.stop="handleViewClick(province)"
+              type="button"
+              class="font-medium text-green-400 hover:no-underline hover:text-green-600 dark:text-green-500 hover:underline mr-4"
+            >
+              VIEW
+            </button>
+            <button
               @click.stop="handleEditClick(province)"
               type="button"
               class="font-medium text-blue-300 hover:no-underline hover:text-blue-600 dark:text-blue-500 hover:underline mr-4"
@@ -118,8 +126,10 @@ const handleSubmitForm = async () => {
   <base-modal
     :modalTitle="modalTitle"
     :isModalActive="isModalActive"
+    :isViewItem="isViewItem"
     @submit-form="handleSubmitForm"
     @closeModal="closeModal"
+    @onEditItem="handleEditClick(currentProvince)"
   >
     <form
       class="relative py-4 px-5 my-8 md:px-10 bg-gray-50 border border-gray-200 shadow-md rounded"
@@ -132,6 +142,7 @@ const handleSubmitForm = async () => {
       <input
         id="name"
         v-model="currentProvince.name"
+        :disabled="isViewItem"
         class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
         placeholder="Province name"
       />
@@ -144,6 +155,7 @@ const handleSubmitForm = async () => {
       <input
         id="name"
         v-model="currentProvince.description"
+        :disabled="isViewItem"
         class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
         placeholder="Province description"
       />

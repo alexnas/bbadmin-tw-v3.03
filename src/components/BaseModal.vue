@@ -1,11 +1,15 @@
 <script setup lang="ts">
-defineEmits(['close-modal', 'submit-form'])
+defineEmits(['close-modal', 'submit-form', 'on-edit-item'])
 defineProps({
   modalTitle: {
     type: String,
     default: 'Modal Card'
   },
   isModalActive: {
+    type: Boolean,
+    default: false
+  },
+  isViewItem: {
     type: Boolean,
     default: false
   }
@@ -52,6 +56,15 @@ defineProps({
 
         <div class="flex items-center justify-start w-full mt-4">
           <button
+            v-if="isViewItem"
+            class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-700 transition duration-150 ease-in-out hover:bg-orange-600 bg-orange-700 sm:rounded-lg text-white px-8 py-2 text-sm"
+            type="button"
+            @click.prevent="$emit('on-edit-item')"
+          >
+            Edit
+          </button>
+          <button
+            v-if="!isViewItem"
             class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-700 transition duration-150 ease-in-out hover:bg-teal-600 bg-teal-700 sm:rounded-lg text-white px-8 py-2 text-sm"
             type="submit"
             @click.prevent="$emit('submit-form')"

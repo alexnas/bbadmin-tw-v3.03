@@ -37,7 +37,9 @@ export const useModalStore = defineStore('modal', () => {
 
   const openViewItemModal = () => {
     resetModalState()
-    isViewItem.value = false
+    isModalActive.value = true
+    isNewItem.value = false
+    isViewItem.value = true
   }
 
   return {
