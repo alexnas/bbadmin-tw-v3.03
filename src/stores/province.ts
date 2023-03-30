@@ -44,7 +44,7 @@ export const useProvinceStore = defineStore('provinces', () => {
   }
 
   const setCurrentProvince = (province: IProvince) => {
-    currentProvince.value = province
+    currentProvince.value = { ...province }
     return currentProvince.value
   }
 

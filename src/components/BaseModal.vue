@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useModalStore } from '@/stores/modal'
-defineEmits(['close-modal', 'submit-form', 'on-edit-item'])
+defineEmits(['close-modal'])
 
 const modalStore = useModalStore()
-const { isModalActive, isViewItem, modalTitle } = storeToRefs(modalStore)
+const { isModalActive, modalTitle } = storeToRefs(modalStore)
 </script>
 
 <template>
@@ -44,34 +44,7 @@ const { isModalActive, isViewItem, modalTitle } = storeToRefs(modalStore)
         </button>
 
         <slot />
-
-        <div class="flex items-center justify-start w-full mt-4">
-          <button
-            v-if="isViewItem"
-            class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-700 transition duration-150 ease-in-out hover:bg-orange-600 bg-orange-700 sm:rounded-lg text-white px-8 py-2 text-sm"
-            type="button"
-            @click.prevent="$emit('on-edit-item')"
-          >
-            Edit
-          </button>
-          <button
-            v-if="!isViewItem"
-            class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-700 transition duration-150 ease-in-out hover:bg-teal-600 bg-teal-700 sm:rounded-lg text-white px-8 py-2 text-sm"
-            type="submit"
-            @click.prevent="$emit('submit-form')"
-          >
-            Submit
-          </button>
-          <button
-            class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 ml-3 bg-gray-100 transition duration-150 text-gray-600 ease-in-out hover:border-gray-400 hover:bg-gray-300 border sm:rounded-lg px-8 py-2 text-sm"
-            @click="$emit('close-modal')"
-          >
-            Cancel
-          </button>
-        </div>
       </div>
     </div>
   </Teleport>
 </template>
-
-<style scoped></style>
