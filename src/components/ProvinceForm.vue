@@ -4,11 +4,24 @@ import { useProvinceStore } from '@/stores/province'
 import { useModalStore } from '@/stores/modal'
 import BaseModal from '@/components/BaseModal.vue'
 import { formatDateTime } from '@/tools/formatDate'
+import { Form as VeeForm, Field as VeeField } from 'vee-validate'
+import * as Yup from 'yup'
 
 const provinceStore = useProvinceStore()
 const modalStore = useModalStore()
 const { currentProvince } = storeToRefs(provinceStore)
 const { isNewItem, isViewItem } = storeToRefs(modalStore)
+
+const provinceSchema = Yup.object().shape({
+  name: Yup.string()
+    .required('Name is required')
+    .min(5, 'Name must be at least 5 characters')
+    .max(50, 'Name should not be more than 50 characters'),
+  description: Yup.string()
+    .required('Description is required')
+    .min(5, 'Description must be at least 5 characters')
+    .max(100, 'Description should not be more than 100 characters')
+})
 
 const closeModal = () => {
   provinceStore.resetCurrentProvince()
@@ -33,33 +46,39 @@ const handleSubmit = async () => {
 
 <template>
   <base-modal @closeModal="closeModal">
-    <form
+    <VeeForm
       class="relative py-4 px-5 my-8 md:px-10 bg-gray-50 border border-gray-200 shadow-md rounded"
+      :validation-schema="provinceSchema"
+      v-slot="{ errors, meta }"
     >
       <div class="mb-3">
         <label class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
           >Name</label
         >
-        <input
+        <Field name="firstName" type="text" class="form-control" />
+        <VeeField
           name="name"
+          type="text"
           v-model="currentProvince.name"
-          :disabled="isViewItem"
           class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           placeholder="Province name"
         />
+        <div class="text-red-400">{{ errors.name }}</div>
       </div>
 
       <div class="mb-3">
         <label class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
           >Description</label
         >
-        <input
+        <VeeField
           name="description"
+          type="text"
           v-model="currentProvince.description"
           :disabled="isViewItem"
           class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           placeholder="Province description"
         />
+        <div class="text-red-400">{{ errors.description }}</div>
       </div>
 
       <div v-if="!isNewItem" class="mb-3">
@@ -99,7 +118,8 @@ const handleSubmit = async () => {
         </button>
         <button
           v-if="!isViewItem"
-          class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-700 transition duration-150 ease-in-out hover:bg-teal-600 bg-teal-700 sm:rounded-lg text-white px-8 py-2 text-sm"
+          :disabled="!meta.valid"
+          class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-700 transition duration-150 ease-in-out hover:bg-teal-600 enabled:bg-teal-700 disabled:bg-gray-400 sm:rounded-lg text-white px-8 py-2 text-sm"
           type="submit"
           @click.prevent="handleSubmit"
         >
@@ -113,6 +133,6 @@ const handleSubmit = async () => {
           Cancel
         </button>
       </div>
-    </form>
+    </VeeForm>
   </base-modal>
 </template>
