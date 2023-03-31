@@ -16,6 +16,7 @@ const initProvince: IProvince = {
 export const useProvinceStore = defineStore('provinces', () => {
   const provinces = ref<IProvince[]>([])
   const currentProvince = ref<IProvince>({ ...initProvince })
+  const preEditedProvince = ref<IProvince>({ ...initProvince })
   const loading = ref<boolean>(false)
   const error = ref<string | null>(null)
 
@@ -39,6 +40,7 @@ export const useProvinceStore = defineStore('provinces', () => {
   }
 
   const resetCurrentProvince = () => {
+    preEditedProvince.value = { ...initProvince }
     currentProvince.value = { ...initProvince }
     return currentProvince.value
   }
@@ -46,6 +48,19 @@ export const useProvinceStore = defineStore('provinces', () => {
   const setCurrentProvince = (province: IProvince) => {
     currentProvince.value = { ...province }
     return currentProvince.value
+  }
+
+  const cancelPreEditedProvince = () => {
+    preEditedProvince.value = { ...initProvince }
+  }
+
+  const resetPreEditedProvince = () => {
+    currentProvince.value = { ...preEditedProvince.value }
+  }
+
+  const setPreEditedProvince = (province: IProvince) => {
+    preEditedProvince.value = { ...province }
+    return preEditedProvince.value
   }
 
   const createProfince = async (provinceItem: IProvince) => {
@@ -143,6 +158,7 @@ export const useProvinceStore = defineStore('provinces', () => {
   return {
     provinces,
     currentProvince,
+    preEditedProvince,
     loading,
     error,
     getProfinces,
@@ -150,6 +166,9 @@ export const useProvinceStore = defineStore('provinces', () => {
     updateProfince,
     deleteProfince,
     setCurrentProvince,
-    resetCurrentProvince
+    resetCurrentProvince,
+    cancelPreEditedProvince,
+    resetPreEditedProvince,
+    setPreEditedProvince
   }
 })

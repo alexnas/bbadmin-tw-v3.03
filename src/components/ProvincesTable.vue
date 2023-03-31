@@ -18,15 +18,18 @@ onMounted(() => {
 })
 
 const handleAddNewClick = () => {
+  provinceStore.cancelPreEditedProvince()
   modalStore.openNewItemModal()
 }
 
 const handleViewClick = (province: IProvince) => {
+  provinceStore.setPreEditedProvince(province)
   provinceStore.setCurrentProvince(province)
   modalStore.openViewItemModal()
 }
 
 const handleEditClick = (province: IProvince) => {
+  provinceStore.setPreEditedProvince(province)
   provinceStore.setCurrentProvince(province)
   modalStore.openEditItemModal()
 }
