@@ -6,4 +6,13 @@ interface IProvince {
   updatedAt: string
 }
 
-export type { IProvince }
+interface ICity {
+  id: number
+  name: string
+  provinceId: number
+  description: string
+  createdAt: string
+  updatedAt: string
+}
+
+export type { IProvince, ICity }
