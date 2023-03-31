@@ -28,6 +28,10 @@ const closeModal = () => {
   modalStore.resetModalState()
 }
 
+const resetModalForm = () => {
+  provinceStore.resetPreEditedProvince()
+}
+
 const handleEditClick = () => {
   provinceStore.setCurrentProvince(currentProvince.value)
   modalStore.openEditItemModal()
@@ -119,7 +123,7 @@ const handleSubmit = async () => {
         <button
           v-if="!isViewItem"
           :disabled="!meta.valid"
-          class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-700 transition duration-150 ease-in-out hover:bg-teal-600 enabled:bg-teal-700 disabled:bg-gray-400 sm:rounded-lg text-white px-8 py-2 text-sm"
+          class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-700 transition duration-150 ease-in-out enabled:hover:bg-teal-600 enabled:bg-teal-700 disabled:bg-gray-400 sm:rounded-lg text-white px-8 py-2 text-sm"
           type="submit"
           @click.prevent="handleSubmit"
         >
@@ -132,6 +136,16 @@ const handleSubmit = async () => {
         >
           Cancel
         </button>
+
+        <div class="ml-auto sm:visible invisible">
+          <button
+            class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 ml-3 bg-gray-500 transition duration-150 text-gray-100 ease-in-out hover:border-gray-400 hover:bg-gray-400 border sm:rounded-lg px-8 py-2 text-sm"
+            @click.prevent="resetModalForm"
+            type="reset"
+          >
+            Reset
+          </button>
+        </div>
       </div>
     </VeeForm>
   </base-modal>
