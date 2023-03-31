@@ -1,17 +1,29 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import { Icon } from '@iconify/vue'
 import type { ICity } from '@/types'
 import { useCityStore } from '@/stores/city'
+import { useProvinceStore } from '@/stores/province'
 import { useModalStore } from '@/stores/modal'
-import { storeToRefs } from 'pinia'
 import { formatDateTime } from '@/tools/formatDate'
 import { cutText } from '@/tools/formatString'
 import CityForm from './CityForm.vue'
 
 const cityStore = useCityStore()
-const modalStore = useModalStore()
-
 const { cities } = storeToRefs(cityStore)
+const modalStore = useModalStore()
+const provinceStore = useProvinceStore()
+const { provinces } = storeToRefs(provinceStore)
+
+const getProvinceNameById = (id: number) => {
+  try {
+    const idx = provinces.value.findIndex((province) => province.id === +id)
+    return provinces.value[idx].name
+  } catch (error) {
+    console.log(error)
+    return ''
+  }
+}
 
 const handleAddNewClick = () => {
   // cityStore.cancelPreEditedCity()
@@ -75,7 +87,7 @@ const handleDeleteClick = (city: ICity) => {
           <td class="px-4 py-3">{{ idx + 1 }}</td>
           <td class="px-4 py-3">{{ city.id }}</td>
           <td class="px-4 py-3">{{ city.name }}</td>
-          <td class="px-4 py-3">{{ city.provinceId }}</td>
+          <td class="px-4 py-3">{{ getProvinceNameById(city.provinceId) }}</td>
           <td class="px-4 py-3">{{ cutText(city.description, 50) }}</td>
           <td class="px-4 py-3">{{ formatDateTime(city.createdAt) }}</td>
           <td class="px-4 py-3">{{ formatDateTime(city.updatedAt) }}</td>

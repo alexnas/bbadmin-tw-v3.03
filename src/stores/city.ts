@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { onMounted, ref } from 'vue'
+
 import axios from 'axios'
 import type { ICity } from '@/types'
 
@@ -13,7 +14,7 @@ const initCity: ICity = {
   updatedAt: ''
 }
 
-export const useCityStore = defineStore('cities', () => {
+export const useCityStore = defineStore('city', () => {
   const cities = ref<ICity[]>([])
   const currentCity = ref<ICity>({ ...initCity })
   const preEditedCity = ref<ICity>({ ...initCity })
