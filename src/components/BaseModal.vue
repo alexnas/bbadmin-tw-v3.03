@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useModalStore } from '@/stores/modal'
+
 defineEmits(['close-modal'])
+defineProps({
+  modalTitle: {
+    type: String,
+    default: 'Card Title'
+  }
+})
 
 const modalStore = useModalStore()
-const { isModalActive, modalTitle } = storeToRefs(modalStore)
+const { isModalActive } = storeToRefs(modalStore)
 </script>
 
 <template>

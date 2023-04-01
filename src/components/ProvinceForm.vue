@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
+import * as Yup from 'yup'
+import { computed } from 'vue'
+import { Form as VeeForm, Field as VeeField } from 'vee-validate'
 import { useProvinceStore } from '@/stores/province'
 import { useModalStore } from '@/stores/modal'
 import BaseModal from '@/components/BaseModal.vue'
 import { formatDateTime } from '@/tools/formatDate'
-import { Form as VeeForm, Field as VeeField } from 'vee-validate'
-import * as Yup from 'yup'
 
 const provinceStore = useProvinceStore()
 const modalStore = useModalStore()
@@ -21,6 +22,12 @@ const provinceSchema = Yup.object().shape({
     .required('Description is required')
     .min(5, 'Description must be at least 5 characters')
     .max(100, 'Description should not be more than 100 characters')
+})
+
+const modalTitle = computed(() => {
+  return isViewItem.value || !isNewItem.value
+    ? `Province: ${currentProvince.value.name} (id: ${currentProvince.value.id})`
+    : 'New Province'
 })
 
 const closeModal = () => {
@@ -49,7 +56,7 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <base-modal @closeModal="closeModal">
+  <base-modal @closeModal="closeModal" :modalTitle="modalTitle">
     <VeeForm
       class="relative py-4 px-5 my-8 md:px-10 bg-gray-50 border border-gray-200 shadow-md rounded"
       :validation-schema="provinceSchema"
