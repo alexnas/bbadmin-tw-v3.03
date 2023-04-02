@@ -1,15 +1,16 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useProvinceStore } from '@/stores/province'
-import { useModalStore } from '@/stores/modal'
-import BaseModal from '@/components/BaseModal.vue'
-import { formatDateTime } from '@/tools/formatDate'
 import { Form as VeeForm, Field as VeeField } from 'vee-validate'
 import * as Yup from 'yup'
+import { useProvinceStore } from '@/stores/province'
+import { useModalStore } from '@/stores/modal'
+import { formatDateTime } from '@/tools/formatDate'
+import BaseModal from '@/components/BaseModal.vue'
 
 const provinceStore = useProvinceStore()
-const modalStore = useModalStore()
 const { currentProvince } = storeToRefs(provinceStore)
+const modalStore = useModalStore()
 const { isNewItem, isViewItem } = storeToRefs(modalStore)
 
 const provinceSchema = Yup.object().shape({
@@ -20,7 +21,13 @@ const provinceSchema = Yup.object().shape({
   description: Yup.string()
     .required('Description is required')
     .min(5, 'Description must be at least 5 characters')
-    .max(100, 'Description should not be more than 100 characters')
+    .max(400, 'Description should not be more than 400 characters')
+})
+
+const modalTitle = computed(() => {
+  return isViewItem.value || !isNewItem.value
+    ? `Province: ${currentProvince.value.name} (id: ${currentProvince.value.id})`
+    : 'New Province'
 })
 
 const closeModal = () => {
@@ -43,13 +50,13 @@ const handleSubmit = async () => {
   } else {
     await provinceStore.updateProfince(currentProvince.value)
   }
-  modalStore.resetModalState()
   provinceStore.resetCurrentProvince()
+  modalStore.resetModalState()
 }
 </script>
 
 <template>
-  <base-modal @closeModal="closeModal">
+  <base-modal @closeModal="closeModal" :modalTitle="modalTitle">
     <VeeForm
       class="relative py-4 px-5 my-8 md:px-10 bg-gray-50 border border-gray-200 shadow-md rounded"
       :validation-schema="provinceSchema"
@@ -59,11 +66,11 @@ const handleSubmit = async () => {
         <label class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
           >Name</label
         >
-        <Field name="firstName" type="text" class="form-control" />
         <VeeField
           name="name"
           type="text"
           v-model="currentProvince.name"
+          :disabled="isViewItem"
           class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           placeholder="Province name"
         />

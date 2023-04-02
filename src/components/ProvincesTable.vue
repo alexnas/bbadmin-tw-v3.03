@@ -2,16 +2,16 @@
 import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { Icon } from '@iconify/vue'
+import type { IProvince } from '@/types'
 import { useProvinceStore } from '@/stores/province'
 import { useModalStore } from '@/stores/modal'
-import type { IProvince } from '@/types'
 import { formatDateTime } from '@/tools/formatDate'
 import { cutText } from '@/tools/formatString'
 import ProvinceForm from '@/components/ProvinceForm.vue'
 
 const provinceStore = useProvinceStore()
-const modalStore = useModalStore()
 const { provinces } = storeToRefs(provinceStore)
+const modalStore = useModalStore()
 
 onMounted(() => {
   provinceStore.resetCurrentProvince()
@@ -38,7 +38,7 @@ const handleDeleteClick = async (province: IProvince) => {
   const { id, name } = province
   const confirmed = confirm(`Are you sure to delete all data for the province: ${name}, ID=${id}?`)
   if (confirmed) {
-    await provinceStore.deleteProfince(province)
+    await provinceStore.deleteProvince(province)
   }
   modalStore.resetModalState()
 }
