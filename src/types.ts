@@ -26,4 +26,4 @@ interface ICompany {
   updatedAt: string
 }
 
-export type { IProvince, ICity }
+export type { IProvince, ICity, ICompany }
