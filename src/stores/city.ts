@@ -2,8 +2,9 @@ import { onMounted, ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import type { ICity } from '@/types'
+import { API_BASE_URL, CITY_ENDPOINT } from '@/constants/apiConstants'
 
-const cityApi = 'http://localhost:5000/api/city'
+const cityApi = `${API_BASE_URL}${CITY_ENDPOINT}`
 const initCity: ICity = {
   id: -1,
   name: '',

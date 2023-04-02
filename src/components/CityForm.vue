@@ -24,7 +24,7 @@ const citySchema = Yup.object().shape({
   description: Yup.string()
     .required('Description is required')
     .min(5, 'Description must be at least 5 characters')
-    .max(400, 'Description should not be more than 400 characters'),
+    .max(250, 'Description should not be more than 250 characters'),
   province: Yup.number().required().notOneOf([-1], 'Select Province is a required')
 })
 
@@ -107,10 +107,10 @@ const handleSubmit = async () => {
         >
         <VeeField
           name="description"
-          type="text"
+          as="textarea"
           v-model="currentCity.description"
           :disabled="isViewItem"
-          class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
+          class="mb-5 mt-2 pt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           placeholder="City description"
         />
         <div class="text-red-400">{{ errors && errors.description }}</div>
