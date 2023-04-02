@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-import * as Yup from 'yup'
 import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
 import { Form as VeeForm, Field as VeeField } from 'vee-validate'
+import * as Yup from 'yup'
 import { useProvinceStore } from '@/stores/province'
 import { useModalStore } from '@/stores/modal'
-import BaseModal from '@/components/BaseModal.vue'
 import { formatDateTime } from '@/tools/formatDate'
+import BaseModal from '@/components/BaseModal.vue'
 
 const provinceStore = useProvinceStore()
-const modalStore = useModalStore()
 const { currentProvince } = storeToRefs(provinceStore)
+const modalStore = useModalStore()
 const { isNewItem, isViewItem } = storeToRefs(modalStore)
 
 const provinceSchema = Yup.object().shape({
@@ -21,7 +21,7 @@ const provinceSchema = Yup.object().shape({
   description: Yup.string()
     .required('Description is required')
     .min(5, 'Description must be at least 5 characters')
-    .max(100, 'Description should not be more than 100 characters')
+    .max(400, 'Description should not be more than 400 characters')
 })
 
 const modalTitle = computed(() => {
@@ -50,8 +50,8 @@ const handleSubmit = async () => {
   } else {
     await provinceStore.updateProfince(currentProvince.value)
   }
-  modalStore.resetModalState()
   provinceStore.resetCurrentProvince()
+  modalStore.resetModalState()
 }
 </script>
 
@@ -66,11 +66,11 @@ const handleSubmit = async () => {
         <label class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
           >Name</label
         >
-        <Field name="firstName" type="text" class="form-control" />
         <VeeField
           name="name"
           type="text"
           v-model="currentProvince.name"
+          :disabled="isViewItem"
           class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           placeholder="Province name"
         />

@@ -1,6 +1,5 @@
-import { defineStore } from 'pinia'
 import { onMounted, ref } from 'vue'
-
+import { defineStore } from 'pinia'
 import axios from 'axios'
 import type { IProvince } from '@/types'
 
@@ -125,7 +124,7 @@ export const useProvinceStore = defineStore('provinces', () => {
     }
   }
 
-  const deleteProfince = async (provinceItem: IProvince) => {
+  const deleteProvince = async (provinceItem: IProvince) => {
     const id = provinceItem.id
     const idx = provinces.value.findIndex((item) => item.id === id)
     if (idx === -1) {
@@ -164,7 +163,7 @@ export const useProvinceStore = defineStore('provinces', () => {
     getProfinces,
     createProfince,
     updateProfince,
-    deleteProfince,
+    deleteProvince,
     setCurrentProvince,
     resetCurrentProvince,
     cancelPreEditedProvince,

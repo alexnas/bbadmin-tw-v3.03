@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { Icon } from '@iconify/vue'
 import type { ICity } from '@/types'
@@ -7,7 +8,7 @@ import { useProvinceStore } from '@/stores/province'
 import { useModalStore } from '@/stores/modal'
 import { formatDateTime } from '@/tools/formatDate'
 import { cutText } from '@/tools/formatString'
-import CityForm from './CityForm.vue'
+import CityForm from '@/components/CityForm.vue'
 
 const cityStore = useCityStore()
 const { cities } = storeToRefs(cityStore)
@@ -15,9 +16,15 @@ const modalStore = useModalStore()
 const provinceStore = useProvinceStore()
 const { provinces } = storeToRefs(provinceStore)
 
+onMounted(() => {
+  cityStore.resetCurrentCity()
+})
+
 const getProvinceNameById = (id: number) => {
   try {
-    const idx = provinces.value.findIndex((province) => province.id === +id)
+    const idx = provinces.value.findIndex((province) => +province.id === +id)
+    if (idx === -1) return
+
     return provinces.value[idx].name
   } catch (error) {
     console.log(error)
@@ -26,26 +33,27 @@ const getProvinceNameById = (id: number) => {
 }
 
 const handleAddNewClick = () => {
-  // cityStore.cancelPreEditedCity()
+  cityStore.cancelPreEditedCity()
   modalStore.openNewItemModal()
 }
 
 const handleViewClick = (city: ICity) => {
-  // cityStore.cancelPreEditedCity()
-  modalStore.openNewItemModal()
-}
-
-const handleEditClick = (city: ICity) => {
-  // cityStore.setPreEditedCity(city)
-  // cityStore.setCurrentCity(city)
+  cityStore.setPreEditedCity(city)
+  cityStore.setCurrentCity(city)
   modalStore.openViewItemModal()
 }
 
-const handleDeleteClick = (city: ICity) => {
+const handleEditClick = (city: ICity) => {
+  cityStore.setPreEditedCity(city)
+  cityStore.setCurrentCity(city)
+  modalStore.openEditItemModal()
+}
+
+const handleDeleteClick = async (city: ICity) => {
   const { id, name } = city
-  const confirmed = confirm(`Are you sure to delete all data for the province: ${name}, ID=${id}?`)
+  const confirmed = confirm(`Are you sure to delete all data for the city: ${name}, ID=${id}?`)
   if (confirmed) {
-    // await cityStore.deleteProfince(city)
+    await cityStore.deleteCity(city)
   }
   modalStore.resetModalState()
 }
