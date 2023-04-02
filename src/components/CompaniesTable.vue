@@ -80,7 +80,11 @@ const handleDeleteClick = async (company: ICompany) => {
         >
           <td class="px-4 py-3">{{ idx + 1 }}</td>
           <td class="px-4 py-3">{{ company.id }}</td>
-          <td class="px-4 py-3">LOGO</td>
+          <td class="px-4 py-3">
+            <div class="w-24 h-auto">
+              <img class="rounded" title="Logo" alt="Logo" :src="company.logo" />
+            </div>
+          </td>
           <td class="px-4 py-3">{{ company.name }}</td>
           <td class="px-4 py-3">{{ company.fullname }}</td>
           <td class="px-4 py-3">{{ company.rating }}</td>
