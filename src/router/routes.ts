@@ -25,6 +25,12 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Cities',
     component: () => import('../views/CitiesView.vue'),
     meta: { layout: AdminLayout }
+  },
+  {
+    path: '/company',
+    name: 'Companies',
+    component: () => import('../views/CompaniesView.vue'),
+    meta: { layout: AdminLayout }
   }
 ]
 
