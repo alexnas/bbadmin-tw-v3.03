@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
+import { Icon } from '@iconify/vue'
 import { useCompanyStore } from '@/stores/company'
 import type { ICompany } from '@/types'
 import { useModalStore } from '@/stores/modal'
 import { formatDateTime } from '@/tools/formatDate'
 import { cutText } from '@/tools/formatString'
+import CompanyForm from '@/components/CompanyForm.vue'
 
 const companyStore = useCompanyStore()
 const { companies } = storeToRefs(companyStore)
@@ -36,15 +38,14 @@ const handleDeleteClick = async (company: ICompany) => {
   const { id, name } = company
   const confirmed = confirm(`Are you sure to delete all data for the province: ${name}, ID=${id}?`)
   if (confirmed) {
-    // await companyStore.deleteCompany(company)
+    await companyStore.deleteCompany(company)
   }
   modalStore.resetModalState()
 }
 </script>
 
 <template>
-  <h1>Companies Table</h1>
-  <div class="flex items-center justify-end -mt-6">
+  <div class="flex items-center justify-end -mt-6 h-24">
     <button @click.stop="handleAddNewClick()" type="button">
       <Icon
         class="text-5xl text-green-400 hover:text-green-500"
@@ -120,5 +121,5 @@ const handleDeleteClick = async (company: ICompany) => {
   </div>
 
   <!-- City Modal Form -->
-  <CityForm />
+  <CompanyForm />
 </template>

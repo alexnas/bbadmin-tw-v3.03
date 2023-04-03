@@ -48,8 +48,8 @@ export const useCompanyStore = defineStore('company', () => {
     return currentCompany.value
   }
 
-  const setCurrentCompany = (province: ICompany) => {
-    currentCompany.value = { ...province }
+  const setCurrentCompany = (company: ICompany) => {
+    currentCompany.value = { ...company }
     return currentCompany.value
   }
 
@@ -61,9 +61,103 @@ export const useCompanyStore = defineStore('company', () => {
     currentCompany.value = { ...preEditedCompany.value }
   }
 
-  const setPreEditedCompany = (province: ICompany) => {
-    preEditedCompany.value = { ...province }
+  const setPreEditedCompany = (company: ICompany) => {
+    preEditedCompany.value = { ...company }
     return preEditedCompany.value
+  }
+
+  const createCompany = async (companyItem: ICompany) => {
+    const idx = companies.value.findIndex((item) => item.name === companyItem.name)
+    if (idx >= 0) {
+      console.log(`Error: There is already such company instance with name=${companyItem.name}`)
+      throw Error(`There is already such company instance with name=${companyItem.name}`)
+    }
+
+    const params = {
+      name: companyItem.name,
+      fullname: companyItem.fullname,
+      description: companyItem.description,
+      rating: companyItem.rating,
+      logo: companyItem.logo
+    }
+
+    try {
+      loading.value = true
+      const { data } = await axios.post(companyApi, params)
+      companies.value.push(data)
+      loading.value = false
+      error.value = null
+    } catch (err: any) {
+      loading.value = false
+      if (axios.isAxiosError(error)) {
+        error.value = err.message
+        console.log('Error', err.message)
+      } else {
+        error.value = 'Unexpected error encountered'
+        console.log('Error', err)
+      }
+    }
+  }
+
+  const updateCompany = async (companyItem: ICompany) => {
+    const id = companyItem.id
+    const idx = companies.value.findIndex((item) => item.id === id)
+    if (idx === -1) {
+      console.log(`Error: There is no such company instance with id=${id}`)
+      throw Error(`There is no such company instance with id=${id}`)
+    }
+
+    const params = {
+      id: id,
+      name: companyItem.name,
+      fullname: companyItem.fullname,
+      description: companyItem.description,
+      rating: companyItem.rating,
+      logo: companyItem.logo
+    }
+
+    try {
+      loading.value = true
+      const { data } = await axios.put(`${companyApi}/${id}`, params)
+      companies.value[idx] = data
+      loading.value = false
+      error.value = null
+    } catch (err: any) {
+      loading.value = false
+      if (axios.isAxiosError(error)) {
+        error.value = err.message
+        console.log('Error', err.message)
+      } else {
+        error.value = 'Unexpected error encountered'
+        console.log('Error', err)
+      }
+    }
+  }
+
+  const deleteCompany = async (companyItem: ICompany) => {
+    const id = companyItem.id
+    const idx = companies.value.findIndex((item) => item.id === id)
+    if (idx === -1) {
+      console.log(`Error: There is no such company instance with id=${id}`)
+      throw Error(`There is no such company instance with id=${id}`)
+    }
+
+    try {
+      loading.value = true
+      await axios.delete(`${companyApi}/${id}`)
+      companies.value = companies.value.filter((item) => item.id !== id)
+      loading.value = false
+      error.value = null
+    } catch (err: any) {
+      loading.value = false
+      if (axios.isAxiosError(error)) {
+        error.value = err.message
+        console.log('Error', err.message)
+      } else {
+        error.value = 'Unexpected error encountered'
+        console.log('Error', err)
+      }
+    }
   }
 
   onMounted(async () => {
@@ -77,9 +171,9 @@ export const useCompanyStore = defineStore('company', () => {
     loading,
     error,
     getCompanies,
-    // createCompany,
-    // updateCompany,
-    // deleteCompany,
+    createCompany,
+    updateCompany,
+    deleteCompany,
     setCurrentCompany,
     resetCurrentCompany,
     cancelPreEditedCompany,

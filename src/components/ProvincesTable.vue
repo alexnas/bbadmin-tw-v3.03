@@ -45,7 +45,7 @@ const handleDeleteClick = async (province: IProvince) => {
 </script>
 
 <template>
-  <div class="flex items-center justify-end -mt-6">
+  <div class="flex items-center justify-end -mt-6 h-24">
     <button @click.stop="handleAddNewClick()" type="button">
       <Icon
         class="text-5xl text-green-400 hover:text-green-500"
