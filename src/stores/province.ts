@@ -20,7 +20,7 @@ export const useProvinceStore = defineStore('provinces', () => {
   const loading = ref<boolean>(false)
   const error = ref<string | null>(null)
 
-  const getProfinces = async () => {
+  const getProvinces = async () => {
     try {
       loading.value = true
       const { data } = await axios.get(provinceApi)
@@ -63,7 +63,7 @@ export const useProvinceStore = defineStore('provinces', () => {
     return preEditedProvince.value
   }
 
-  const createProfince = async (provinceItem: IProvince) => {
+  const createProvince = async (provinceItem: IProvince) => {
     const idx = provinces.value.findIndex((item) => item.name === provinceItem.name)
     if (idx >= 0) {
       console.log(`Error: There is already such province instance with name=${provinceItem.name}`)
@@ -93,7 +93,7 @@ export const useProvinceStore = defineStore('provinces', () => {
     }
   }
 
-  const updateProfince = async (provinceItem: IProvince) => {
+  const updateProvince = async (provinceItem: IProvince) => {
     const id = provinceItem.id
     const idx = provinces.value.findIndex((item) => item.id === id)
     if (idx === -1) {
@@ -152,7 +152,7 @@ export const useProvinceStore = defineStore('provinces', () => {
   }
 
   onMounted(async () => {
-    await getProfinces()
+    await getProvinces()
   })
 
   return {
@@ -161,9 +161,9 @@ export const useProvinceStore = defineStore('provinces', () => {
     preEditedProvince,
     loading,
     error,
-    getProfinces,
-    createProfince,
-    updateProfince,
+    getProvinces,
+    createProvince,
+    updateProvince,
     deleteProvince,
     setCurrentProvince,
     resetCurrentProvince,

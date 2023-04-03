@@ -46,9 +46,9 @@ const handleEditClick = () => {
 
 const handleSubmit = async () => {
   if (isNewItem.value) {
-    await provinceStore.createProfince(currentProvince.value)
+    await provinceStore.createProvince(currentProvince.value)
   } else {
-    await provinceStore.updateProfince(currentProvince.value)
+    await provinceStore.updateProvince(currentProvince.value)
   }
   provinceStore.resetCurrentProvince()
   modalStore.resetModalState()
