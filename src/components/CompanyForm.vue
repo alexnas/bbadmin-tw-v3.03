@@ -32,7 +32,6 @@ const companySchema = Yup.object().shape({
     .required('Description is required')
     .min(5, 'Description must be at least 5 characters')
     .max(250, 'Description should not be more than 250 characters'),
-  // logo: Yup.string().default('').max(250, 'Logo should not be more than 250 characters'),
   rating: Yup.number()
     .default(-1)
     .min(-1, 'Rating should be a number from 0 to 5')
@@ -55,9 +54,9 @@ const handleEditClick = () => {
 
 const handleSubmit = async () => {
   if (isNewItem.value) {
-    // await companyStore.createCompany(currentCompany.value)
+    await companyStore.createCompany(currentCompany.value)
   } else {
-    // await companyStore.updateCompany(currentCompany.value)
+    await companyStore.updateCompany(currentCompany.value)
   }
   companyStore.resetCurrentCompany()
   modalStore.resetModalState()

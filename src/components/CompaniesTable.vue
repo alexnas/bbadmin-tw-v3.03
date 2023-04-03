@@ -38,7 +38,7 @@ const handleDeleteClick = async (company: ICompany) => {
   const { id, name } = company
   const confirmed = confirm(`Are you sure to delete all data for the province: ${name}, ID=${id}?`)
   if (confirmed) {
-    // await companyStore.deleteCompany(company)
+    await companyStore.deleteCompany(company)
   }
   modalStore.resetModalState()
 }
