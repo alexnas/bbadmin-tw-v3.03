@@ -117,18 +117,18 @@ export const useCompanyStore = defineStore('company', () => {
       throw Error(`There is no such company instance with id=${id}`)
     }
 
-    const params = {
-      id: id,
-      name: companyItem.name,
-      fullname: companyItem.fullname,
-      description: companyItem.description,
-      rating: companyItem.rating,
-      logo: companyItem.logo
-    }
+    const formData = new FormData()
+    formData.append('files', selectedFile.value as any)
+    formData.append('id', String(id))
+    formData.append('name', companyItem.name)
+    formData.append('fullname', companyItem.fullname)
+    formData.append('description', companyItem.description)
+    formData.append('rating', String(companyItem.rating))
+    formData.append('logo', companyItem.logo)
 
     try {
       loading.value = true
-      const { data } = await axios.put(`${companyApi}/${id}`, params)
+      const { data } = await axios.put(`${companyApi}/${id}`, formData)
       companies.value[idx] = data
       loading.value = false
       error.value = null

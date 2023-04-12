@@ -48,7 +48,6 @@ const closeModal = () => {
 
 const resetModalForm = () => {
   companyStore.resetPreEditedCompany()
-  companyStore.resetCurrentCompany()
   imageStore.resetFileInput()
 }
 
@@ -123,21 +122,6 @@ const handleSubmit = async () => {
 
       <div class="mb-3">
         <label class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
-          >Logo</label
-        >
-        <VeeField
-          name="logo"
-          as="textarea"
-          v-model="currentCompany.logo"
-          readonly
-          class="mb-5 mt-2 pt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-          placeholder="Company logo"
-        />
-        <div class="text-red-400">{{ errors.logo }}</div>
-      </div>
-
-      <div class="mb-3">
-        <label class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
           >Rating</label
         >
         <VeeField
@@ -175,6 +159,31 @@ const handleSubmit = async () => {
           class="mb-5 mt-2 read-only:bg-gray-100 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           placeholder="Date of update"
         />
+      </div>
+
+      <div v-if="!isNewItem" class="mb-3">
+        <label class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
+          >Logo Image</label
+        >
+        <div
+          class="mb-5 mt-2 px-3 py-2 read-only:bg-gray-100 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full flex items-center text-sm border-gray-300 rounded border"
+        >
+          <div class="w-24 h-auto">
+            <img class="rounded" title="Logo" alt="Logo" :src="currentCompany.logo" />
+          </div>
+          <div
+            class="my-2 mx-2 read-only:bg-gray-100 text-gray-600 focus:outline-none font-normal w-full h-10 flex items-center text-sm"
+          >
+            <input
+              name="logo"
+              type="text"
+              :value="currentCompany.logo"
+              readonly
+              class="px-3 read-only:bg-gray-100 text-gray-600 focus:outline-none focus:border focus:border-gray-400 font-normal w-full h-10 flex items-center text-sm border-gray-300 rounded border"
+              placeholder="Company logo"
+            />
+          </div>
+        </div>
       </div>
 
       <upload-image v-if="!isViewItem"></upload-image>
