@@ -1,7 +1,8 @@
 import { onMounted, ref } from 'vue'
-import { defineStore } from 'pinia'
+import { defineStore, storeToRefs } from 'pinia'
 import axios from 'axios'
 import type { ICompany } from '@/types'
+import { useImageStore } from '@/stores/image'
 import { API_BASE_URL, COMPANY_ENDPOINT } from '@/constants/apiConstants'
 
 const companyApi = `${API_BASE_URL}${COMPANY_ENDPOINT}`
@@ -22,6 +23,9 @@ export const useCompanyStore = defineStore('company', () => {
   const preEditedCompany = ref<ICompany>({ ...initCompany })
   const loading = ref<boolean>(false)
   const error = ref<string | null>(null)
+
+  const imageStore = useImageStore()
+  const { selectedFile } = storeToRefs(imageStore)
 
   const getCompanies = async () => {
     try {
@@ -73,18 +77,24 @@ export const useCompanyStore = defineStore('company', () => {
       throw Error(`There is already such company instance with name=${companyItem.name}`)
     }
 
-    const params = {
-      name: companyItem.name,
-      fullname: companyItem.fullname,
-      description: companyItem.description,
-      rating: companyItem.rating,
-      logo: companyItem.logo
-    }
+    const formData = new FormData()
+    formData.append('files', selectedFile.value as any)
+    formData.append('name', companyItem.name)
+    formData.append('fullname', companyItem.fullname)
+    formData.append('description', companyItem.description)
+    formData.append('rating', String(companyItem.rating))
+    formData.append('logo', companyItem.logo)
 
     try {
       loading.value = true
-      const { data } = await axios.post(companyApi, params)
-      companies.value.push(data)
+      const result = await axios.post(companyApi, formData, {
+        headers: {
+          'Content-Type': `multipart/form-data}`
+        }
+      })
+
+      companies.value.push(result.data)
+
       loading.value = false
       error.value = null
     } catch (err: any) {
@@ -107,18 +117,18 @@ export const useCompanyStore = defineStore('company', () => {
       throw Error(`There is no such company instance with id=${id}`)
     }
 
-    const params = {
-      id: id,
-      name: companyItem.name,
-      fullname: companyItem.fullname,
-      description: companyItem.description,
-      rating: companyItem.rating,
-      logo: companyItem.logo
-    }
+    const formData = new FormData()
+    formData.append('files', selectedFile.value as any)
+    formData.append('id', String(id))
+    formData.append('name', companyItem.name)
+    formData.append('fullname', companyItem.fullname)
+    formData.append('description', companyItem.description)
+    formData.append('rating', String(companyItem.rating))
+    formData.append('logo', companyItem.logo)
 
     try {
       loading.value = true
-      const { data } = await axios.put(`${companyApi}/${id}`, params)
+      const { data } = await axios.put(`${companyApi}/${id}`, formData)
       companies.value[idx] = data
       loading.value = false
       error.value = null

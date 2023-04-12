@@ -31,6 +31,12 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Companies',
     component: () => import('../views/CompaniesView.vue'),
     meta: { layout: AdminLayout }
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import('../views/NotFoundView.vue'),
+    meta: { layout: AdminLayout }
   }
 ]
 
