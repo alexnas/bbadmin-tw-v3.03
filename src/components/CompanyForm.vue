@@ -5,13 +5,16 @@ import { Form as VeeForm, Field as VeeField } from 'vee-validate'
 import * as Yup from 'yup'
 import { useCompanyStore } from '@/stores/company'
 import { useModalStore } from '@/stores/modal'
+import { useImageStore } from '@/stores/image'
 import { formatDateTime } from '@/tools/formatDate'
 import BaseModal from '@/components/BaseModal.vue'
+import UploadImage from '@/components/UploadImage.vue'
 
 const companyStore = useCompanyStore()
 const { currentCompany } = storeToRefs(companyStore)
 const modalStore = useModalStore()
 const { isNewItem, isViewItem } = storeToRefs(modalStore)
+const imageStore = useImageStore()
 
 const modalTitle = computed(() => {
   return isViewItem.value || !isNewItem.value
@@ -45,6 +48,8 @@ const closeModal = () => {
 
 const resetModalForm = () => {
   companyStore.resetPreEditedCompany()
+  companyStore.resetCurrentCompany()
+  imageStore.resetFileInput()
 }
 
 const handleEditClick = () => {
@@ -58,6 +63,7 @@ const handleSubmit = async () => {
   } else {
     await companyStore.updateCompany(currentCompany.value)
   }
+  resetModalForm()
   companyStore.resetCurrentCompany()
   modalStore.resetModalState()
 }
@@ -170,6 +176,8 @@ const handleSubmit = async () => {
           placeholder="Date of update"
         />
       </div>
+
+      <upload-image v-if="!isViewItem"></upload-image>
 
       <div class="flex items-center justify-start w-full mt-4">
         <button
