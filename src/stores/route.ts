@@ -74,8 +74,12 @@ export const useRouteStore = defineStore('route', () => {
     return preEditedRoute.value
   }
 
+  const createRoute = async (routeItem: IRoute) => {
+    console.log('editRoute', routeItem)
+  }
+
   const updateRoute = async (routeItem: IRoute) => {
-    console.log('editRoute')
+    console.log('editRoute', routeItem)
   }
 
   const deleteRoute = async (routeItem: IRoute) => {
@@ -98,6 +102,7 @@ export const useRouteStore = defineStore('route', () => {
     cancelPreEditedRoute,
     resetPreEditedRoute,
     setPreEditedRoute,
+    createRoute,
     updateRoute,
     deleteRoute
   }

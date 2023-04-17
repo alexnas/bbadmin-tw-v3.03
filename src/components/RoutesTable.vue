@@ -38,7 +38,7 @@ const getCompanyNameById = (id: number) => {
 const getCityNameById = (id: number) => {
   try {
     const idx = cities.value.findIndex((city) => +city.id === +id)
-    if (idx === -1) return
+    if (idx === -1) return '---'
 
     return cities.value[idx].name
   } catch (error) {
