@@ -26,4 +26,23 @@ interface ICompany {
   updatedAt: string
 }
 
-export type { IProvince, ICity, ICompany }
+interface IRoute {
+  id: number
+  name: string
+  companyId: number
+  startCityId: number
+  endCityId: number
+  viaCityId: number
+  start_time: string
+  end_time: string
+  price: number
+  distance: number
+  startTerminalId: number
+  endTerminalId: number
+  busInfoId: number
+  description: string
+  createdAt: string
+  updatedAt: string
+}
+
+export type { IProvince, ICity, ICompany, IRoute }
