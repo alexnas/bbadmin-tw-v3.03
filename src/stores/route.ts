@@ -75,7 +75,31 @@ export const useRouteStore = defineStore('route', () => {
   }
 
   const createRoute = async (routeItem: IRoute) => {
-    console.log('editRoute', routeItem)
+    const idx = routes.value.findIndex((item) => item.name === routeItem.name)
+    if (idx >= 0) {
+      console.log(`Error: There is already such city instance with name=${routeItem.name}`)
+      throw Error(`There is already such city instance with name=${routeItem.name}`)
+    }
+
+    const params = { ...routeItem }
+
+    try {
+      loading.value = true
+      const { data } = await axios.post(routeApi, params)
+
+      routes.value.push(data)
+      loading.value = false
+      error.value = null
+    } catch (err: any) {
+      loading.value = false
+      if (axios.isAxiosError(error)) {
+        error.value = err.message
+        console.log('Error', err.message)
+      } else {
+        error.value = 'Unexpected error encountered'
+        console.log('Error', err)
+      }
+    }
   }
 
   const updateRoute = async (routeItem: IRoute) => {
