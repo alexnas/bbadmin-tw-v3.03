@@ -9,6 +9,7 @@ import { useCityStore } from '@/stores/city'
 import { useCompanyStore } from '@/stores/company'
 import { formatDateTime } from '@/tools/formatDate'
 import BaseModal from '@/components/BaseModal.vue'
+import { timeRegex, currencyRegex } from '@/tools/formatRegex'
 
 const routeStore = useRouteStore()
 const { currentRoute } = storeToRefs(routeStore)
@@ -18,9 +19,6 @@ const cityStore = useCityStore()
 const { cities } = storeToRefs(cityStore)
 const companyStore = useCompanyStore()
 const { companies } = storeToRefs(companyStore)
-
-const timeRegex = /^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/
-const currencyRegex = /^\d+(\.\d{0,2})?$/
 
 const citySchema = Yup.object().shape({
   name: Yup.string()
@@ -44,16 +42,16 @@ const citySchema = Yup.object().shape({
     .min(-1, 'Select End City')
     .notOneOf([-1], 'Select End City'),
   viaCity: Yup.number()
-    .nullable('Define key stopover as Via City')
-    .typeError('Define key stopover as Via City')
-    .min(0, 'Define key stopover as Via City')
+    .nullable('Define main stopover as  Via City if it is necessary')
+    .typeError('Define main stopover as  Via City if it is necessary')
+    .min(-1, 'Define main stopover as  Via City if it is necessary')
     .transform((_, val) => (val !== '' ? Number(val) : null)),
   startTime: Yup.string()
     .required('Start Time is required')
-    .matches(timeRegex, 'Valid time format should be HH:MM.'),
+    .matches(timeRegex, 'Time data should have correct time pattern.'),
   endTime: Yup.string()
     .required('End Time is required')
-    .matches(timeRegex, 'Valid time format should be HH:MM.'),
+    .matches(timeRegex, 'Time data should have correct time pattern.'),
   price: Yup.number()
     .required('Price is required')
     .positive()
@@ -78,6 +76,19 @@ const modalTitle = computed(() => {
     : 'New Route'
 })
 
+const routeName = computed(() => {
+  const startCityName = cityStore.getCityNameById(currentRoute.value.startCityId)
+  const endCityName = cityStore.getCityNameById(currentRoute.value.endCityId)
+  const viaCityName = cityStore.getCityNameById(currentRoute.value.viaCityId)
+  const via = viaCityName === '' ? '-' : `-${viaCityName}-`
+
+  if (startCityName === '' && endCityName === '' && viaCityName === '') {
+    return 'Noname'
+  }
+
+  return `${startCityName}${via}${endCityName}`
+})
+
 const closeModal = () => {
   routeStore.resetCurrentRoute()
   modalStore.resetModalState()
@@ -93,10 +104,12 @@ const handleEditClick = () => {
 }
 
 const handleSubmit = async () => {
+  const formResult = { ...currentRoute.value, name: routeName.value }
+
   if (isNewItem.value) {
-    await routeStore.createRoute(currentRoute.value)
+    await routeStore.createRoute(formResult)
   } else {
-    await routeStore.updateRoute(currentRoute.value)
+    await routeStore.updateRoute(formResult)
   }
   cityStore.resetCurrentCity()
   modalStore.resetModalState()
@@ -112,12 +125,12 @@ const handleSubmit = async () => {
     >
       <div class="mb-3">
         <label class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
-          >Name*</label
+          >Name</label
         >
         <VeeField
           name="name"
           type="text"
-          v-model="currentRoute.name"
+          v-model="routeName"
           :disabled="true"
           class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           placeholder="Route name"
@@ -132,7 +145,6 @@ const handleSubmit = async () => {
         <VeeField
           as="select"
           name="company"
-          id="city"
           :disabled="isViewItem"
           v-model="currentRoute.companyId"
           class="mb-5 mt-2 text-gray-600 bg-white focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
@@ -152,7 +164,6 @@ const handleSubmit = async () => {
         <VeeField
           as="select"
           name="startCity"
-          id="city"
           :disabled="isViewItem"
           v-model="currentRoute.startCityId"
           class="mb-5 mt-2 text-gray-600 bg-white focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
@@ -172,7 +183,6 @@ const handleSubmit = async () => {
         <VeeField
           as="select"
           name="endCity"
-          id="city"
           :disabled="isViewItem"
           v-model="currentRoute.endCityId"
           class="mb-5 mt-2 text-gray-600 bg-white focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
@@ -192,7 +202,6 @@ const handleSubmit = async () => {
         <VeeField
           as="select"
           name="viaCity"
-          id="city"
           :disabled="isViewItem"
           v-model="currentRoute.viaCityId"
           class="mb-5 mt-2 text-gray-600 bg-white focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
@@ -210,9 +219,8 @@ const handleSubmit = async () => {
           >Start Time*</label
         >
         <VeeField
-          type="text"
+          type="time"
           name="startTime"
-          id="city"
           :disabled="isViewItem"
           v-model="currentRoute.start_time"
           class="mb-5 mt-2 text-gray-600 bg-white focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
@@ -225,9 +233,8 @@ const handleSubmit = async () => {
           >End Time*</label
         >
         <VeeField
-          type="text"
+          type="time"
           name="endTime"
-          id="city"
           :disabled="isViewItem"
           v-model="currentRoute.end_time"
           class="mb-5 mt-2 text-gray-600 bg-white focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
