@@ -15,36 +15,15 @@ const routeStore = useRouteStore()
 const { routes } = storeToRefs(routeStore)
 const modalStore = useModalStore()
 const companyStore = useCompanyStore()
-const { companies } = storeToRefs(companyStore)
 const cityStore = useCityStore()
-const { cities } = storeToRefs(cityStore)
 
 onMounted(() => {
   routeStore.resetCurrentRoute()
 })
 
-const getCompanyNameById = (id: number) => {
-  try {
-    const idx = companies.value.findIndex((company) => +company.id === +id)
-    if (idx === -1) return
-
-    return companies.value[idx].name
-  } catch (error) {
-    console.log(error)
-    return ''
-  }
-}
-
-const getCityNameById = (id: number) => {
-  try {
-    const idx = cities.value.findIndex((city) => +city.id === +id)
-    if (idx === -1) return '---'
-
-    return cities.value[idx].name
-  } catch (error) {
-    console.log(error)
-    return ''
-  }
+const cityName = (id: number) => {
+  const name = cityStore.getCityNameById(id)
+  return name === '' ? '~' : name
 }
 
 const handleAddNewClick = () => {
@@ -122,11 +101,11 @@ const handleDeleteClick = async (route: IRoute) => {
           <td class="px-4 py-3">{{ idx + 1 }}</td>
           <td class="px-4 py-3">{{ route.id }}</td>
           <td class="px-4 py-3">{{ route.name }}</td>
-          <td class="px-4 py-3">{{ getCompanyNameById(route.companyId) }}</td>
+          <td class="px-4 py-3">{{ companyStore.getCompanyNameById(route.companyId) }}</td>
 
-          <td class="px-4 py-3">{{ getCityNameById(route.startCityId) }}</td>
-          <td class="px-4 py-3">{{ getCityNameById(route.endCityId) }}</td>
-          <td class="px-4 py-3">{{ getCityNameById(route.viaCityId) }}</td>
+          <td class="px-4 py-3">{{ cityName(route.startCityId) }}</td>
+          <td class="px-4 py-3">{{ cityName(route.endCityId) }}</td>
+          <td class="px-4 py-3">{{ cityName(route.viaCityId) }}</td>
 
           <td class="px-4 py-3">{{ route.start_time }}</td>
           <td class="px-4 py-3">{{ route.start_time }}</td>
