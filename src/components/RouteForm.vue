@@ -111,7 +111,7 @@ const handleSubmit = async () => {
   } else {
     await routeStore.updateRoute(formResult)
   }
-  cityStore.resetCurrentCity()
+  routeStore.resetCurrentRoute()
   modalStore.resetModalState()
 }
 </script>

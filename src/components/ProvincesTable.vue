@@ -58,7 +58,7 @@ const handleDeleteClick = async (province: IProvince) => {
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <table class="w-full text-base text-left text-gray-500 dark:text-gray-400 bg-gray-50">
       <thead
-        class="text-sm text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400"
+        class="text-sm text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
       >
         <tr>
           <th scope="col" class="px-4 py-3">#</th>
