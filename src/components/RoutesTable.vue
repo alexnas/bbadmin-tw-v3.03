@@ -45,7 +45,7 @@ const handleEditClick = (route: IRoute) => {
 
 const handleDeleteClick = async (route: IRoute) => {
   const { id, name } = route
-  const confirmed = confirm(`Are you sure to delete all data for the city: ${name}, ID=${id}?`)
+  const confirmed = confirm(`Are you sure to delete all data for the route: ${name}, ID=${id}?`)
   if (confirmed) {
     await routeStore.deleteRoute(route)
   }
