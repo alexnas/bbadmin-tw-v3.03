@@ -80,7 +80,7 @@ const routeName = computed(() => {
   const startCityName = cityStore.getCityNameById(currentRoute.value.startCityId)
   const endCityName = cityStore.getCityNameById(currentRoute.value.endCityId)
   const viaCityName = cityStore.getCityNameById(currentRoute.value.viaCityId)
-  const via = viaCityName === '' ? '-' : `-${viaCityName}-`
+  const via = viaCityName === '' ? '-' : `-(${viaCityName})-`
 
   if (startCityName === '' && endCityName === '' && viaCityName === '') {
     return 'Noname'

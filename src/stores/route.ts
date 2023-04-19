@@ -103,7 +103,32 @@ export const useRouteStore = defineStore('route', () => {
   }
 
   const updateRoute = async (routeItem: IRoute) => {
-    console.log('editRoute', routeItem)
+    const id = routeItem.id
+    const idx = routes.value.findIndex((item) => item.id === id)
+    if (idx === -1) {
+      console.log(`Error: There is no such city instance with id=${id}`)
+      throw Error(`There is no such city instance with id=${id}`)
+    }
+
+    const params = { ...routeItem }
+
+    try {
+      loading.value = true
+
+      const { data } = await axios.put(`${routeApi}/${id}`, params)
+      routes.value[idx] = data
+      loading.value = false
+      error.value = null
+    } catch (err: any) {
+      loading.value = false
+      if (axios.isAxiosError(error)) {
+        error.value = err.message
+        console.log('Error', err.message)
+      } else {
+        error.value = 'Unexpected error encountered'
+        console.log('Error', err)
+      }
+    }
   }
 
   const deleteRoute = async (routeItem: IRoute) => {
