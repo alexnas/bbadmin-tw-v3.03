@@ -77,8 +77,8 @@ export const useRouteStore = defineStore('route', () => {
   const createRoute = async (routeItem: IRoute) => {
     const idx = routes.value.findIndex((item) => item.name === routeItem.name)
     if (idx >= 0) {
-      console.log(`Error: There is already such city instance with name=${routeItem.name}`)
-      throw Error(`There is already such city instance with name=${routeItem.name}`)
+      console.log(`Error: There is already such route instance with name=${routeItem.name}`)
+      throw Error(`There is already such route instance with name=${routeItem.name}`)
     }
 
     const params = { ...routeItem }
@@ -103,11 +103,58 @@ export const useRouteStore = defineStore('route', () => {
   }
 
   const updateRoute = async (routeItem: IRoute) => {
-    console.log('editRoute', routeItem)
+    const id = routeItem.id
+    const idx = routes.value.findIndex((item) => item.id === id)
+    if (idx === -1) {
+      console.log(`Error: There is no such route instance with id=${id}`)
+      throw Error(`There is no such route instance with id=${id}`)
+    }
+
+    const params = { ...routeItem }
+
+    try {
+      loading.value = true
+
+      const { data } = await axios.put(`${routeApi}/${id}`, params)
+      routes.value[idx] = data
+      loading.value = false
+      error.value = null
+    } catch (err: any) {
+      loading.value = false
+      if (axios.isAxiosError(error)) {
+        error.value = err.message
+        console.log('Error', err.message)
+      } else {
+        error.value = 'Unexpected error encountered'
+        console.log('Error', err)
+      }
+    }
   }
 
   const deleteRoute = async (routeItem: IRoute) => {
-    console.log('deleteRoute', routeItem)
+    const id = routeItem.id
+    const idx = routes.value.findIndex((item) => item.id === id)
+    if (idx === -1) {
+      console.log(`Error: There is no such route instance with id=${id}`)
+      throw Error(`There is no such route instance with id=${id}`)
+    }
+
+    try {
+      loading.value = true
+      await axios.delete(`${routeApi}/${id}`)
+      routes.value = routes.value.filter((item) => item.id !== id)
+      loading.value = false
+      error.value = null
+    } catch (err: any) {
+      loading.value = false
+      if (axios.isAxiosError(error)) {
+        error.value = err.message
+        console.log('Error', err.message)
+      } else {
+        error.value = 'Unexpected error encountered'
+        console.log('Error', err)
+      }
+    }
   }
 
   onMounted(async () => {
