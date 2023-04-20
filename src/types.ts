@@ -45,4 +45,12 @@ interface IRoute {
   updatedAt: string
 }
 
-export type { IProvince, ICity, ICompany, IRoute }
+interface IRole {
+  id: number
+  name: string
+  description: string
+  createdAt: string
+  updatedAt: string
+}
+
+export type { IProvince, ICity, ICompany, IRoute, IRole }

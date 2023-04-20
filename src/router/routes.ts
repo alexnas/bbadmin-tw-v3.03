@@ -39,6 +39,18 @@ const routes: Array<RouteRecordRaw> = [
     meta: { layout: AdminLayout }
   },
   {
+    path: '/user',
+    name: 'Users',
+    component: () => import('../views/UsersView.vue'),
+    meta: { layout: AdminLayout }
+  },
+  {
+    path: '/role',
+    name: 'Roles',
+    component: () => import('../views/RolesView.vue'),
+    meta: { layout: AdminLayout }
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('../views/NotFoundView.vue'),
