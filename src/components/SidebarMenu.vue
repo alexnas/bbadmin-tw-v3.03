@@ -16,6 +16,11 @@ let sideMenu: ISideMenuItem[] = reactive([
     path: '/user'
   },
   {
+    name: 'Roles',
+    label: 'Roles',
+    path: '/role'
+  },
+  {
     name: 'Provinces',
     label: 'Provinces',
     path: '/province'
