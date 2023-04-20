@@ -64,15 +64,91 @@ export const useRoleStore = defineStore('roles', () => {
   }
 
   const createRole = async (roleItem: IRole) => {
-    console.log('createRole', roleItem)
+    const idx = roles.value.findIndex((item) => item.name === roleItem.name)
+    if (idx >= 0) {
+      console.log(`Error: There is already such role instance with name=${roleItem.name}`)
+      throw Error(`There is already such role instance with name=${roleItem.name}`)
+    }
+
+    const params = {
+      name: roleItem.name,
+      description: roleItem.description
+    }
+
+    try {
+      loading.value = true
+      const { data } = await axios.post(roleApi, params)
+      roles.value.push(data)
+      loading.value = false
+      error.value = null
+    } catch (err: any) {
+      loading.value = false
+      if (axios.isAxiosError(error)) {
+        error.value = err.message
+        console.log('Error', err.message)
+      } else {
+        error.value = 'Unexpected error encountered'
+        console.log('Error', err)
+      }
+    }
   }
 
   const updateRole = async (roleItem: IRole) => {
-    console.log('updateRole', roleItem)
+    const id = roleItem.id
+    const idx = roles.value.findIndex((item) => item.id === id)
+    if (idx === -1) {
+      console.log(`Error: There is no such role instance with id=${id}`)
+      throw Error(`There is no such role instance with id=${id}`)
+    }
+
+    const params = {
+      id: id,
+      name: roleItem.name,
+      description: roleItem.description
+    }
+
+    try {
+      loading.value = true
+      const { data } = await axios.put(`${roleApi}/${id}`, params)
+      roles.value[idx] = data
+      loading.value = false
+      error.value = null
+    } catch (err: any) {
+      loading.value = false
+      if (axios.isAxiosError(error)) {
+        error.value = err.message
+        console.log('Error', err.message)
+      } else {
+        error.value = 'Unexpected error encountered'
+        console.log('Error', err)
+      }
+    }
   }
 
   const deleteRole = async (roleItem: IRole) => {
-    console.log('deleteRole', roleItem)
+    const id = roleItem.id
+    const idx = roles.value.findIndex((item) => item.id === id)
+    if (idx === -1) {
+      console.log(`Error: There is no such role instance with id=${id}`)
+      throw Error(`There is no such role instance with id=${id}`)
+    }
+
+    try {
+      loading.value = true
+      await axios.delete(`${roleApi}/${id}`)
+      roles.value = roles.value.filter((item) => item.id !== id)
+      loading.value = false
+      error.value = null
+    } catch (err: any) {
+      loading.value = false
+      if (axios.isAxiosError(error)) {
+        error.value = err.message
+        console.log('Error', err.message)
+      } else {
+        error.value = 'Unexpected error encountered'
+        console.log('Error', err)
+      }
+    }
   }
 
   onMounted(async () => {
