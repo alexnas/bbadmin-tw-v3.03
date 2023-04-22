@@ -14,23 +14,10 @@ const cityStore = useCityStore()
 const { cities } = storeToRefs(cityStore)
 const modalStore = useModalStore()
 const provinceStore = useProvinceStore()
-const { provinces } = storeToRefs(provinceStore)
 
 onMounted(() => {
   cityStore.resetCurrentCity()
 })
-
-const getProvinceNameById = (id: number) => {
-  try {
-    const idx = provinces.value.findIndex((province) => +province.id === +id)
-    if (idx === -1) return
-
-    return provinces.value[idx].name
-  } catch (error) {
-    console.log(error)
-    return ''
-  }
-}
 
 const handleAddNewClick = () => {
   cityStore.cancelPreEditedCity()
@@ -95,7 +82,7 @@ const handleDeleteClick = async (city: ICity) => {
           <td class="px-4 py-3">{{ idx + 1 }}</td>
           <td class="px-4 py-3">{{ city.id }}</td>
           <td class="px-4 py-3">{{ city.name }}</td>
-          <td class="px-4 py-3">{{ getProvinceNameById(city.provinceId) }}</td>
+          <td class="px-4 py-3">{{ provinceStore.getProvinceNameById(city.provinceId) }}</td>
           <td class="px-4 py-3">{{ cutText(city.description, 50) }}</td>
           <td class="px-4 py-3">{{ formatDateTime(city.createdAt) }}</td>
           <td class="px-4 py-3">{{ formatDateTime(city.updatedAt) }}</td>

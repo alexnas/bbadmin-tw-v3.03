@@ -39,6 +39,11 @@ export const useProvinceStore = defineStore('provinces', () => {
     }
   }
 
+  const getProvinceNameById = (id: number) => {
+    const idx = provinces.value.findIndex((province) => +province.id === +id)
+    return idx === -1 ? '' : provinces.value[idx].name
+  }
+
   const resetCurrentProvince = () => {
     preEditedProvince.value = { ...initProvince }
     currentProvince.value = { ...initProvince }
@@ -162,6 +167,7 @@ export const useProvinceStore = defineStore('provinces', () => {
     loading,
     error,
     getProvinces,
+    getProvinceNameById,
     createProvince,
     updateProvince,
     deleteProvince,
