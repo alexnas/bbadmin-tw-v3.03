@@ -1,7 +1,8 @@
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import type { IRoute } from '@/types'
+import { useCityStore } from '@/stores/city'
 import { API_BASE_URL, ROUTE_ENDPOINT } from '@/constants/apiConstants'
 
 const routeApi = `${API_BASE_URL}${ROUTE_ENDPOINT}`
@@ -30,6 +31,20 @@ export const useRouteStore = defineStore('route', () => {
   const preEditedRoute = ref<IRoute>({ ...initRoute })
   const loading = ref<boolean>(false)
   const error = ref<string | null>(null)
+
+  const routeName = computed(() => {
+    const cityStore = useCityStore()
+    const startCityName = cityStore.getCityNameById(currentRoute.value.startCityId)
+    const endCityName = cityStore.getCityNameById(currentRoute.value.endCityId)
+    const viaCityName = cityStore.getCityNameById(currentRoute.value.viaCityId)
+    const via = viaCityName === '' ? '-' : `-(${viaCityName})-`
+
+    if (startCityName === '' && endCityName === '' && viaCityName === '') {
+      return 'Noname'
+    }
+
+    return `${startCityName}${via}${endCityName}`
+  })
 
   const getRoutes = async () => {
     try {
@@ -163,6 +178,7 @@ export const useRouteStore = defineStore('route', () => {
 
   return {
     routes,
+    routeName,
     currentRoute,
     preEditedRoute,
     loading,

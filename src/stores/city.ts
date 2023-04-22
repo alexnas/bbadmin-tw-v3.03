@@ -41,15 +41,8 @@ export const useCityStore = defineStore('city', () => {
   }
 
   const getCityNameById = (id: number) => {
-    try {
-      const idx = cities.value.findIndex((city) => +city.id === +id)
-      if (idx === -1) return ''
-
-      return cities.value[idx].name
-    } catch (error) {
-      console.log(error)
-      return ''
-    }
+    const idx = cities.value.findIndex((city) => +city.id === +id)
+    return idx === -1 ? '' : cities.value[idx].name
   }
 
   const resetCurrentCity = () => {

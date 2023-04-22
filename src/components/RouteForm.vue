@@ -76,19 +76,6 @@ const modalTitle = computed(() => {
     : 'New Route'
 })
 
-const routeName = computed(() => {
-  const startCityName = cityStore.getCityNameById(currentRoute.value.startCityId)
-  const endCityName = cityStore.getCityNameById(currentRoute.value.endCityId)
-  const viaCityName = cityStore.getCityNameById(currentRoute.value.viaCityId)
-  const via = viaCityName === '' ? '-' : `-(${viaCityName})-`
-
-  if (startCityName === '' && endCityName === '' && viaCityName === '') {
-    return 'Noname'
-  }
-
-  return `${startCityName}${via}${endCityName}`
-})
-
 const closeModal = () => {
   routeStore.resetCurrentRoute()
   modalStore.resetModalState()
@@ -104,7 +91,7 @@ const handleEditClick = () => {
 }
 
 const handleSubmit = async () => {
-  const formResult = { ...currentRoute.value, name: routeName.value }
+  const formResult = { ...currentRoute.value, name: routeStore.routeName }
 
   if (isNewItem.value) {
     await routeStore.createRoute(formResult)
@@ -130,7 +117,7 @@ const handleSubmit = async () => {
         <VeeField
           name="name"
           type="text"
-          v-model="routeName"
+          v-model="routeStore.routeName"
           :disabled="true"
           class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           placeholder="Route name"

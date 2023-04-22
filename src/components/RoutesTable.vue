@@ -21,11 +21,6 @@ onMounted(() => {
   routeStore.resetCurrentRoute()
 })
 
-const cityName = (id: number) => {
-  const name = cityStore.getCityNameById(id)
-  return name === '' ? '~' : name
-}
-
 const handleAddNewClick = () => {
   routeStore.cancelPreEditedRoute()
   modalStore.openNewItemModal()
@@ -103,9 +98,9 @@ const handleDeleteClick = async (route: IRoute) => {
           <td class="px-4 py-3">{{ route.name }}</td>
           <td class="px-4 py-3">{{ companyStore.getCompanyNameById(route.companyId) }}</td>
 
-          <td class="px-4 py-3">{{ cityName(route.startCityId) }}</td>
-          <td class="px-4 py-3">{{ cityName(route.endCityId) }}</td>
-          <td class="px-4 py-3">{{ cityName(route.viaCityId) }}</td>
+          <td class="px-4 py-3">{{ cityStore.getCityNameById(route.startCityId) }}</td>
+          <td class="px-4 py-3">{{ cityStore.getCityNameById(route.endCityId) }}</td>
+          <td class="px-4 py-3">{{ cityStore.getCityNameById(route.viaCityId) }}</td>
 
           <td class="px-4 py-3">{{ route.start_time }}</td>
           <td class="px-4 py-3">{{ route.start_time }}</td>
