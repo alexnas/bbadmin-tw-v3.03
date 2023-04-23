@@ -46,11 +46,6 @@ export const useCompanyStore = defineStore('company', () => {
     }
   }
 
-  const getCompanyNameById = (id: number) => {
-    const idx = companies.value.findIndex((company) => +company.id === +id)
-    return idx === -1 ? '' : companies.value[idx].name
-  }
-
   const resetCurrentCompany = () => {
     preEditedCompany.value = { ...initCompany }
     currentCompany.value = { ...initCompany }
@@ -182,7 +177,6 @@ export const useCompanyStore = defineStore('company', () => {
   return {
     companies,
     currentCompany,
-    getCompanyNameById,
     preEditedCompany,
     loading,
     error,
