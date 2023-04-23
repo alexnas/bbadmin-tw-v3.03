@@ -1,9 +1,10 @@
 import { onMounted, ref, computed } from 'vue'
-import { defineStore } from 'pinia'
+import { defineStore, storeToRefs } from 'pinia'
 import axios from 'axios'
 import type { IRoute } from '@/types'
 import { useCityStore } from '@/stores/city'
 import { API_BASE_URL, ROUTE_ENDPOINT } from '@/constants/apiConstants'
+import { useItemNameById } from '@/composables/ItemsById'
 
 const routeApi = `${API_BASE_URL}${ROUTE_ENDPOINT}`
 const initRoute: IRoute = {
@@ -34,9 +35,12 @@ export const useRouteStore = defineStore('route', () => {
 
   const routeName = computed(() => {
     const cityStore = useCityStore()
-    const startCityName = cityStore.getCityNameById(currentRoute.value.startCityId)
-    const endCityName = cityStore.getCityNameById(currentRoute.value.endCityId)
-    const viaCityName = cityStore.getCityNameById(currentRoute.value.viaCityId)
+    const { cities } = storeToRefs(cityStore)
+
+    const startCityName = useItemNameById(currentRoute.value.startCityId, cities.value)
+    const endCityName = useItemNameById(currentRoute.value.endCityId, cities.value)
+    const viaCityName = useItemNameById(currentRoute.value.viaCityId, cities.value)
+
     const via = viaCityName === '' ? '-' : `-(${viaCityName})-`
 
     if (startCityName === '' && endCityName === '' && viaCityName === '') {

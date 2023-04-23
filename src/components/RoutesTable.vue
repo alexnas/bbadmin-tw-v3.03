@@ -18,6 +18,7 @@ const modalStore = useModalStore()
 const companyStore = useCompanyStore()
 const { companies } = storeToRefs(companyStore)
 const cityStore = useCityStore()
+const { cities } = storeToRefs(cityStore)
 
 onMounted(() => {
   routeStore.resetCurrentRoute()
@@ -100,9 +101,9 @@ const handleDeleteClick = async (route: IRoute) => {
           <td class="px-4 py-3">{{ route.name }}</td>
           <td class="px-4 py-3">{{ useItemNameById(route.companyId, companies) }}</td>
 
-          <td class="px-4 py-3">{{ cityStore.getCityNameById(route.startCityId) }}</td>
-          <td class="px-4 py-3">{{ cityStore.getCityNameById(route.endCityId) }}</td>
-          <td class="px-4 py-3">{{ cityStore.getCityNameById(route.viaCityId) }}</td>
+          <td class="px-4 py-3">{{ useItemNameById(route.startCityId, cities) }}</td>
+          <td class="px-4 py-3">{{ useItemNameById(route.endCityId, cities) }}</td>
+          <td class="px-4 py-3">{{ useItemNameById(route.viaCityId, cities) }}</td>
 
           <td class="px-4 py-3">{{ route.start_time }}</td>
           <td class="px-4 py-3">{{ route.start_time }}</td>
