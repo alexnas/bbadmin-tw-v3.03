@@ -40,11 +40,6 @@ export const useCityStore = defineStore('city', () => {
     }
   }
 
-  // const getCityNameById = (id: number) => {
-  //   const idx = cities.value.findIndex((city) => +city.id === +id)
-  //   return idx === -1 ? '' : cities.value[idx].name
-  // }
-
   const resetCurrentCity = () => {
     preEditedCity.value = { ...initCity }
     currentCity.value = { ...initCity }
@@ -170,7 +165,6 @@ export const useCityStore = defineStore('city', () => {
     loading,
     error,
     getCities,
-    // getCityNameById,
     resetCurrentCity,
     setCurrentCity,
     cancelPreEditedCity,
