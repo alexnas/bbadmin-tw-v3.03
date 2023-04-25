@@ -45,6 +45,16 @@ interface IRoute {
   updatedAt: string
 }
 
+interface IUser {
+  id: number
+  name: string
+  email: string
+  roleId: number
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
+
 interface IRole {
   id: number
   name: string
@@ -53,4 +63,4 @@ interface IRole {
   updatedAt: string
 }
 
-export type { IProvince, ICity, ICompany, IRoute, IRole }
+export type { IProvince, ICity, ICompany, IRoute, IRole, IUser }
