@@ -9,6 +9,7 @@ const initUser: IUser = {
   id: -1,
   name: '',
   email: '',
+  password: '',
   roleId: -1,
   isActive: true,
   createdAt: '',
