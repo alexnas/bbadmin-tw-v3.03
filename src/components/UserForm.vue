@@ -185,7 +185,7 @@ const handleSubmit = async () => {
         <label class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
           >Is Active
         </label>
-        <div class="text-gray-600 text-base mb-5 pl-3 bg-white border-gray-300 rounded border">
+        <div class="text-gray-600 text-base mb-5 mt-2 pl-3 bg-white border-gray-300 rounded border">
           <CustomCheckbox
             :label="`Check if this user should be active`"
             v-model="currentUser.isActive"
@@ -221,7 +221,7 @@ const handleSubmit = async () => {
         />
       </div>
 
-      <div class="flex items-center justify-start w-full mt-4">
+      <div class="flex items-center justify-start w-full mt-10">
         <button
           @click.prevent="handleEditClick"
           v-if="isViewItem"
