@@ -68,6 +68,7 @@ const handleDeleteClick = async (user: IUser) => {
           <th scope="col" class="px-4 py-3">ID</th>
           <th scope="col" class="px-4 py-3">On</th>
           <th scope="col" class="px-4 py-3">Name</th>
+          <th scope="col" class="px-4 py-3">Email</th>
           <th scope="col" class="px-4 py-3">Role</th>
           <th scope="col" class="px-4 py-3">Created</th>
           <th scope="col" class="px-4 py-3">Updated</th>
@@ -86,6 +87,7 @@ const handleDeleteClick = async (user: IUser) => {
             {{ user.isActive ? 'TRUE' : 'FALSE' }}
           </td>
           <td class="px-4 py-3">{{ user.name }}</td>
+          <td class="px-4 py-3">{{ user.email }}</td>
           <td class="px-4 py-3">{{ useItemNameById(user.roleId, roles) }}</td>
           <td class="px-4 py-3">{{ formatDateTime(user.createdAt) }}</td>
           <td class="px-4 py-3">{{ formatDateTime(user.updatedAt) }}</td>

@@ -49,6 +49,7 @@ interface IUser {
   id: number
   name: string
   email: string
+  password: string
   roleId: number
   isActive: boolean
   createdAt: string
