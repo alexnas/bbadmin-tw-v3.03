@@ -11,16 +11,6 @@ interface ISideMenuItem {
 
 let sideMenu: ISideMenuItem[] = reactive([
   {
-    name: 'Users',
-    label: 'Users',
-    path: '/user'
-  },
-  {
-    name: 'Roles',
-    label: 'Roles',
-    path: '/role'
-  },
-  {
     name: 'Provinces',
     label: 'Provinces',
     path: '/province'
@@ -42,6 +32,19 @@ let sideMenu: ISideMenuItem[] = reactive([
   }
 ])
 
+let userSideMenu: ISideMenuItem[] = reactive([
+  {
+    name: 'Users',
+    label: 'Users',
+    path: '/user'
+  },
+  {
+    name: 'Roles',
+    label: 'Roles',
+    path: '/role'
+  }
+])
+
 const activeClass = ref(activeMenuItem)
 const inactiveClass = ref(inactiveMenuItem)
 </script>
@@ -49,6 +52,23 @@ const inactiveClass = ref(inactiveMenuItem)
 <template>
   <div class="overflow-y-auto">
     <nav class="mt-2" v-for="item in sideMenu" :key="`${item.name}`">
+      <router-link
+        class="flex items-center px-4 py-2 ml-1 border-l-4 whitespace-nowrap"
+        :class="[$route.name === item.name ? activeClass : inactiveClass]"
+        :to="item.path"
+      >
+        <Icon
+          class="w-5 min-w-[theme('spacing[5]')] text-3xl text-red-500 hover:text-orange-400"
+          icon="bi:app"
+          :inline="true"
+        />
+        <span class="mx-4">{{ item.label }}</span>
+      </router-link>
+    </nav>
+
+    <div class="mx-6 my-6 border-b-2 border-gray-400"></div>
+
+    <nav class="mt-2" v-for="item in userSideMenu" :key="`${item.name}`">
       <router-link
         class="flex items-center px-4 py-2 ml-1 border-l-4 whitespace-nowrap"
         :class="[$route.name === item.name ? activeClass : inactiveClass]"
