@@ -8,6 +8,7 @@ import { useModalStore } from '@/stores/modal'
 import { useRoleStore } from '@/stores/role'
 import { formatDateTime } from '@/tools/formatDate'
 import BaseModal from '@/components/BaseModal.vue'
+import CustomCheckbox from '@/components/CustomCheckbox.vue'
 
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
@@ -178,6 +179,20 @@ const handleSubmit = async () => {
           </option>
         </VeeField>
         <div class="text-red-400">{{ errors && errors?.role }}</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
+          >Is Active
+        </label>
+        <div class="text-gray-600 text-base mb-5 pl-3 bg-white border-gray-300 rounded border">
+          <CustomCheckbox
+            :label="`Check if this user should be active`"
+            v-model="currentUser.isActive"
+            :value="currentUser.isActive"
+            :isDisabled="isViewItem"
+          />
+        </div>
       </div>
 
       <div v-if="!isNewItem" class="mb-3">
