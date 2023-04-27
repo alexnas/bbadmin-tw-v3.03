@@ -21,7 +21,7 @@ const userSchema = Yup.object().shape({
   name: Yup.string()
     .label('Name')
     .required()
-    .min(5, 'Name must be at least 3 characters')
+    .min(3, 'Name must be at least 3 characters')
     .max(50, 'Name should not be more than 50 characters'),
   email: Yup.string()
     .label('Email')
