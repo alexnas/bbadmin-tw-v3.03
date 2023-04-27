@@ -122,7 +122,29 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const deleteUser = async (userItem: IUser) => {
-    console.log('deleteUser', userItem)
+    const id = userItem.id
+    const idx = users.value.findIndex((item) => item.id === id)
+    if (idx === -1) {
+      console.log(`Error: There is no such user instance with id=${id}`)
+      throw Error(`There is no such user instance with id=${id}`)
+    }
+
+    try {
+      loading.value = true
+      await axios.delete(`${userApi}/${id}`)
+      users.value = users.value.filter((item) => item.id !== id)
+      loading.value = false
+      error.value = null
+    } catch (err: any) {
+      loading.value = false
+      if (axios.isAxiosError(error)) {
+        error.value = err.message
+        console.log('Error', err.message)
+      } else {
+        error.value = 'Unexpected error encountered'
+        console.log('Error', err)
+      }
+    }
   }
 
   onMounted(async () => {
