@@ -67,7 +67,30 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const createUser = async (userItem: IUser) => {
-    console.log('createUser', userItem)
+    const idx = users.value.findIndex((item) => item.email === userItem.email)
+    if (idx >= 0) {
+      console.log(`Error: There is already such user instance with email=${userItem.email}`)
+      throw Error(`There is already such user instance with email=${userItem.email}`)
+    }
+
+    const params = { ...userItem }
+
+    try {
+      loading.value = true
+      const { data } = await axios.post(userApi, params)
+      users.value.push(data)
+      loading.value = false
+      error.value = null
+    } catch (err: any) {
+      loading.value = false
+      if (axios.isAxiosError(error)) {
+        error.value = err.message
+        console.log('Error', err.message)
+      } else {
+        error.value = 'Unexpected error encountered'
+        console.log('Error', err)
+      }
+    }
   }
 
   const updateUser = async (userItem: IUser) => {
