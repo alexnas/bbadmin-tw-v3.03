@@ -1,7 +1,22 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
 import { ref, reactive } from 'vue'
+import { storeToRefs } from 'pinia'
+import { Icon } from '@iconify/vue'
+import { useAuthStore } from '@/stores/auth'
 import { activeMenuItem, inactiveMenuItem } from '@/assets/twClasses'
+
+const authStore = useAuthStore()
+const { isAuth, loggedUser } = storeToRefs(authStore)
+
+console.log('isAuth', isAuth.value, loggedUser.value)
+const handleLogin = () => {
+  console.log('handleLogin')
+  authStore.setAuthState()
+}
+const handleLogout = () => {
+  console.log('handleLogout')
+  authStore.resetAuthState()
+}
 
 interface IHeaderMenuItem {
   name: string
@@ -101,6 +116,18 @@ const inactiveClass = ref(inactiveMenuItem)
             >
           </div>
         </div>
+        <div
+          class="text-gray-100 mx-3 hover:text-orange-400 cursor-pointer"
+          @click.prevent="handleLogin"
+        >
+          On
+        </div>
+        <div
+          class="text-gray-100 mx-3 hover:text-orange-400 cursor-pointer"
+          @click.prevent="handleLogout"
+        >
+          Off
+        </div>
 
         <div
           class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
@@ -115,11 +142,17 @@ const inactiveClass = ref(inactiveMenuItem)
                 aria-expanded="false"
                 aria-haspopup="true"
               >
-                <img
-                  class="h-8 w-8 rounded-full"
-                  title="Logout"
-                  alt="User Options"
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                <Icon
+                  v-if="isAuth"
+                  icon="bi:person-circle"
+                  :inline="true"
+                  class="w-6 h-6 min-w-[theme('spacing[5]')] text-3xl text-gray-400 hover:text-gray-100"
+                />
+                <Icon
+                  v-else
+                  icon="ant-design:login-outlined"
+                  :inline="true"
+                  class="w-6 h-6 min-w-[theme('spacing[5]')] text-3xl text-gray-400 hover:text-gray-100"
                 />
               </button>
             </router-link>
