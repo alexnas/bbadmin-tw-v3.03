@@ -1,5 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router'
 import AdminLayout from '../layouts/AdminLayout.vue'
+import AuthLayout from '../layouts/AuthLayout.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -51,10 +52,16 @@ const routes: Array<RouteRecordRaw> = [
     meta: { layout: AdminLayout }
   },
   {
+    path: '/login',
+    name: 'Login',
+    component: () => import('../views/AuthView.vue'),
+    meta: { layout: AuthLayout }
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('../views/NotFoundView.vue'),
-    meta: { layout: AdminLayout }
+    meta: { layout: AuthLayout }
   }
 ]
 
