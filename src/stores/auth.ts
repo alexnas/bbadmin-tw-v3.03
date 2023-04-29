@@ -1,11 +1,12 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { IUser } from '@/types'
+import { initUser } from '@/stores/user'
 
 export const useAuthStore = defineStore('auth', () => {
   const isAuth = ref<boolean>(false)
-  const isRegistered = ref<boolean>(false)
-  const loggedUser = ref<IUser | null>(null)
+  const isRegistered = ref<boolean>(true)
+  const loggedUser = ref<IUser>(initUser)
 
   const setAuthState = () => {
     isAuth.value = true
@@ -14,7 +15,7 @@ export const useAuthStore = defineStore('auth', () => {
   const resetAuthState = () => {
     isAuth.value = false
     isRegistered.value = false
-    loggedUser.value = null
+    loggedUser.value = initUser
   }
 
   const toggleRegistered = () => {
@@ -33,6 +34,10 @@ export const useAuthStore = defineStore('auth', () => {
     resetAuthState()
   }
 
+  const loginUser = (user: IUser) => {
+    console.log('loginUser', user)
+  }
+
   return {
     isAuth,
     isRegistered,
@@ -41,6 +46,7 @@ export const useAuthStore = defineStore('auth', () => {
     resetAuthState,
     toggleRegistered,
     setLoggedUser,
-    logout
+    logout,
+    loginUser
   }
 })
