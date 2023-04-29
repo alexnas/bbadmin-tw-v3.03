@@ -1,12 +1,18 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import axios from 'axios'
 import type { IUser } from '@/types'
 import { initUser } from '@/stores/user'
+import { API_BASE_URL, CHECK_USER_ENDPOINT } from '@/constants/apiConstants'
+
+const checkUserApi = `${API_BASE_URL}${CHECK_USER_ENDPOINT}`
 
 export const useAuthStore = defineStore('auth', () => {
   const isAuth = ref<boolean>(false)
   const isRegistered = ref<boolean>(true)
   const loggedUser = ref<IUser>(initUser)
+  const loading = ref<boolean>(false)
+  const error = ref<string | null>(null)
 
   const setAuthState = () => {
     isAuth.value = true
@@ -34,8 +40,27 @@ export const useAuthStore = defineStore('auth', () => {
     resetAuthState()
   }
 
+  const checkUserExist = async (email: string) => {
+    try {
+      loading.value = true
+      const { data } = await axios.get(`${checkUserApi}?email=${email}`)
+      loading.value = false
+      error.value = null
+      return data
+    } catch (err: any) {
+      loading.value = false
+      if (axios.isAxiosError(error)) {
+        error.value = err.message
+        console.log('Error', err.message)
+      } else {
+        error.value = 'Unexpected error encountered'
+        console.log('Error', err)
+      }
+    }
+  }
+
   const loginUser = (user: IUser) => {
-    console.log('loginUser', user)
+    console.log('loginUser in PINIA', user)
   }
 
   return {
@@ -47,6 +72,7 @@ export const useAuthStore = defineStore('auth', () => {
     toggleRegistered,
     setLoggedUser,
     logout,
-    loginUser
+    loginUser,
+    checkUserExist
   }
 })
