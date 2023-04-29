@@ -3,9 +3,10 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 import type { IUser } from '@/types'
 import { initUser } from '@/stores/user'
-import { API_BASE_URL, CHECK_USER_ENDPOINT } from '@/constants/apiConstants'
+import { API_BASE_URL, CHECK_USER_ENDPOINT, LOGIN_ENDPOINT } from '@/constants/apiConstants'
 
 const checkUserApi = `${API_BASE_URL}${CHECK_USER_ENDPOINT}`
+const loginApi = `${API_BASE_URL}${LOGIN_ENDPOINT}`
 
 export const useAuthStore = defineStore('auth', () => {
   const isAuth = ref<boolean>(false)
@@ -59,8 +60,30 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  const loginUser = (user: IUser) => {
-    console.log('loginUser in PINIA', user)
+  const loginUser = async (user: IUser) => {
+    const params = {
+      email: user.email,
+      password: user.password
+    }
+
+    try {
+      loading.value = true
+      const { data } = await axios.post(loginApi, params)
+
+      console.log('data after login', data)
+
+      loading.value = false
+      error.value = null
+    } catch (err: any) {
+      loading.value = false
+      if (axios.isAxiosError(error)) {
+        error.value = err.message
+        console.log('Error', err.message)
+      } else {
+        error.value = 'Unexpected error encountered'
+        console.log('Error', err)
+      }
+    }
   }
 
   return {

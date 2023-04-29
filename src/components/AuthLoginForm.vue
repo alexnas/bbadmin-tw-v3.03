@@ -8,7 +8,7 @@ import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
 const { loggedUser } = storeToRefs(authStore)
-const isEmailBusy = ref(false)
+const isEmailExist = ref(true)
 
 const loginSchema = Yup.object().shape({
   email: Yup.string().label('Email').required().email('Email should fit format "aaa@aaa.aaa" '),
@@ -21,7 +21,7 @@ const loginSchema = Yup.object().shape({
 
 const checkUserExist = async () => {
   const existedUser = await authStore.checkUserExist(loggedUser.value.email)
-  isEmailBusy.value = !!existedUser
+  isEmailExist.value = !!existedUser
 }
 
 const handleSubmit = async () => {
@@ -32,8 +32,8 @@ const handleSubmit = async () => {
 <template>
   <div class="mt-10">
     <VeeForm :validation-schema="loginSchema" v-slot="{ errors, meta }">
-      <div v-if="isEmailBusy" class="mb-4 text-red-500">
-        This email is busy - change it, please.
+      <div v-if="!isEmailExist && !errors.email" class="mb-4 text-red-500">
+        There is no such user, please register.
       </div>
       <div class="flex flex-col mb-6">
         <label for="email" class="mb-1 text-xs sm:text-sm tracking-wide text-gray-600"
@@ -100,7 +100,7 @@ const handleSubmit = async () => {
       <div class="flex w-full mt-8">
         <button
           type="submit"
-          :disabled="!meta.valid || isEmailBusy"
+          :disabled="!meta.valid || !isEmailExist"
           class="flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-700 transition duration-150 ease-in-out enabled:hover:bg-teal-600 enabled:bg-teal-700 disabled:bg-gray-400 sm:rounded-lg text-white px-8 py-2 text-sm sm:text-base w-full"
           @click.prevent="handleSubmit"
         >
