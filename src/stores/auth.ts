@@ -61,7 +61,6 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const loginUser = async (user: IUser) => {
-    console.log('loginUser in PINIA', user)
     const params = {
       email: user.email,
       password: user.password
