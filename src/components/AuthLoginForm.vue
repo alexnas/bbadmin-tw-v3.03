@@ -100,7 +100,7 @@ const handleSubmit = async () => {
       <div class="flex w-full mt-8">
         <button
           type="submit"
-          :disabled="!meta.valid || isEmailExist"
+          :disabled="!meta.valid || !isEmailExist"
           class="flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-700 transition duration-150 ease-in-out enabled:hover:bg-teal-600 enabled:bg-teal-700 disabled:bg-gray-400 sm:rounded-lg text-white px-8 py-2 text-sm sm:text-base w-full"
           @click.prevent="handleSubmit"
         >
