@@ -5,7 +5,7 @@ import type { IUser } from '@/types'
 import { API_BASE_URL, USER_ENDPOINT } from '@/constants/apiConstants'
 
 const userApi = `${API_BASE_URL}${USER_ENDPOINT}`
-const initUser: IUser = {
+export const initUser: IUser = {
   id: -1,
   name: '',
   email: '',
