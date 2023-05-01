@@ -3,11 +3,8 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 import type { IUser } from '@/types'
 import { initUser } from '@/stores/user'
-import { API_BASE_URL, CHECK_USER_ENDPOINT, LOGIN_ENDPOINT } from '@/constants/apiConstants'
+import { CHECK_USER_ENDPOINT, LOGIN_ENDPOINT } from '@/constants/apiConstants'
 import { defaultAPIInstance } from '@/api'
-
-const checkUserApi = `${API_BASE_URL}${CHECK_USER_ENDPOINT}`
-const loginApi = `${API_BASE_URL}${LOGIN_ENDPOINT}`
 
 export const useAuthStore = defineStore('auth', () => {
   const isAuth = ref<boolean>(false)
@@ -45,7 +42,7 @@ export const useAuthStore = defineStore('auth', () => {
   const checkUserExist = async (email: string) => {
     try {
       loading.value = true
-      const { data } = await defaultAPIInstance.get(`${checkUserApi}?email=${email}`)
+      const { data } = await defaultAPIInstance.get(`${CHECK_USER_ENDPOINT}?email=${email}`)
       loading.value = false
       error.value = null
       return data
@@ -69,7 +66,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     try {
       loading.value = true
-      const { data } = await defaultAPIInstance.post('/auth/login', params)
+      const { data } = await defaultAPIInstance.post(LOGIN_ENDPOINT, params)
 
       console.log('data after login', data)
 
