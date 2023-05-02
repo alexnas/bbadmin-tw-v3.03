@@ -7,7 +7,7 @@ import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
-const { loggedUser } = storeToRefs(authStore)
+const { currentUser } = storeToRefs(authStore)
 const isEmailExist = ref(true)
 
 const loginSchema = Yup.object().shape({
@@ -20,12 +20,12 @@ const loginSchema = Yup.object().shape({
 })
 
 const checkUserExist = async () => {
-  const existedUser = await authStore.checkUserExist(loggedUser.value.email)
+  const existedUser = await authStore.checkUserExist(currentUser.value.email)
   isEmailExist.value = !!existedUser
 }
 
 const handleSubmit = async () => {
-  await authStore.loginUser(loggedUser.value)
+  await authStore.login(currentUser.value)
 }
 </script>
 
@@ -53,7 +53,7 @@ const handleSubmit = async () => {
           <VeeField
             type="email"
             name="email"
-            v-model="loggedUser.email"
+            v-model="currentUser.email"
             v-on:blur="checkUserExist()"
             class="text-sm sm:text-base text-gray-600 placeholder-gray-400 pl-10 pr-4 rounded-lg border border-gray-400 w-full py-2 focus:outline-none focus:border-blue-400"
             placeholder="E-Mail Address"
@@ -81,7 +81,7 @@ const handleSubmit = async () => {
           <VeeField
             type="password"
             name="password"
-            v-model="loggedUser.password"
+            v-model="currentUser.password"
             class="text-sm sm:text-base text-gray-600 placeholder-gray-400 pl-10 pr-4 rounded-lg border border-gray-400 w-full py-2 focus:outline-none focus:border-blue-400"
             placeholder="Password"
           />

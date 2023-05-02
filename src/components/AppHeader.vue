@@ -8,14 +8,8 @@ import { activeMenuItem, inactiveMenuItem } from '@/assets/twClasses'
 const authStore = useAuthStore()
 const { isAuth, loggedUser } = storeToRefs(authStore)
 
-console.log('isAuth', isAuth.value, loggedUser.value)
-const handleLogin = () => {
-  console.log('handleLogin')
-  authStore.setAuthState()
-}
 const handleLogout = () => {
-  console.log('handleLogout')
-  authStore.resetAuthState()
+  authStore.logout()
 }
 
 interface IHeaderMenuItem {
@@ -118,15 +112,9 @@ const inactiveClass = ref(inactiveMenuItem)
         </div>
         <div
           class="text-gray-100 mx-3 hover:text-orange-400 cursor-pointer"
-          @click.prevent="handleLogin"
-        >
-          On
-        </div>
-        <div
-          class="text-gray-100 mx-3 hover:text-orange-400 cursor-pointer"
           @click.prevent="handleLogout"
         >
-          Off
+          Logout
         </div>
 
         <div
@@ -155,6 +143,7 @@ const inactiveClass = ref(inactiveMenuItem)
                   class="w-6 h-6 min-w-[theme('spacing[5]')] text-3xl text-gray-400 hover:text-gray-100"
                 />
               </button>
+              <span @click.prevent="handleLogout">{{ isAuth ? loggedUser.name : 'Guest' }}</span>
             </router-link>
           </div>
         </div>
