@@ -64,4 +64,9 @@ interface IRole {
   updatedAt: string
 }
 
-export type { IProvince, ICity, ICompany, IRoute, IRole, IUser }
+interface AuthResponse {
+  token: string
+  user: IUser
+}
+
+export type { IProvince, ICity, ICompany, IRoute, IRole, IUser, AuthResponse }
