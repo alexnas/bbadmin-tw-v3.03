@@ -128,7 +128,7 @@ const handleSubmit = async () => {
           v-model="currentUser.password"
           :disabled="isViewItem"
           class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-          placeholder="User name"
+          placeholder="Password"
         />
         <div class="text-red-400">{{ errors && errors?.password }}</div>
       </div>
@@ -142,7 +142,7 @@ const handleSubmit = async () => {
           type="password"
           :disabled="isViewItem"
           class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-          placeholder="User name"
+          placeholder="Confirm Password"
         />
         <div class="text-red-400">{{ errors && errors?.confirmPassword }}</div>
       </div>
@@ -157,7 +157,7 @@ const handleSubmit = async () => {
           v-model="currentUser.id"
           :disabled="true"
           class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-          placeholder="User name"
+          placeholder="User id"
         />
         <div class="text-red-400">{{ errors && errors?.id }}</div>
       </div>

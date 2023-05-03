@@ -8,19 +8,20 @@ import AuthLoginForm from '@/components/AuthLoginForm.vue'
 import AuthRegisterForm from '@/components/AuthRegisterForm.vue'
 
 const authStore = useAuthStore()
-const { isRegistered } = storeToRefs(authStore)
+const { isLoginForm } = storeToRefs(authStore)
 
 const pageTitle = 'Authentication'
 const formTitle = computed(() => {
-  return isRegistered.value ? `Login` : `Register`
-})
-const toggleFormHint = computed(() => {
-  return isRegistered.value ? `Want to register new account?` : `Have an account already?`
+  return isLoginForm.value ? `Login` : `Register`
 })
 
-const toggleRegistered = () => {
-  console.log('toggleRegistered')
-  authStore.toggleRegistered()
+const toggleFormHint = computed(() => {
+  return isLoginForm.value ? `Want to register new account?` : `Have an account already?`
+})
+
+const toggleIsLoginForm = () => {
+  authStore.resetCurrentUser()
+  isLoginForm.value = !isLoginForm.value
 }
 </script>
 
@@ -32,13 +33,13 @@ const toggleRegistered = () => {
       >
         <div class="font-medium self-center text-xl sm:text-3xl text-gray-500">{{ formTitle }}</div>
 
-        <AuthLoginForm v-if="isRegistered" />
+        <AuthLoginForm v-if="isLoginForm" />
         <AuthRegisterForm v-else />
 
         <div class="flex justify-center items-center mt-6">
           <a
             href="#"
-            @click.prevent="toggleRegistered"
+            @click.prevent="toggleIsLoginForm"
             class="inline-flex items-center font-bold text-xs sm:text-sm text-center text-teal-400 hover:text-orange-400"
           >
             <Icon
