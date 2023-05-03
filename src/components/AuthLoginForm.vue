@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { Form as VeeForm, Field as VeeField } from 'vee-validate'
 import * as Yup from 'yup'
@@ -7,8 +6,7 @@ import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
-const { currentUser } = storeToRefs(authStore)
-const isEmailExist = ref(true)
+const { currentUser, isUserInDb } = storeToRefs(authStore)
 
 const loginSchema = Yup.object().shape({
   email: Yup.string().label('Email').required().email('Email should fit format "aaa@aaa.aaa" '),
@@ -19,20 +17,18 @@ const loginSchema = Yup.object().shape({
     .max(50, 'Password should not be more than 50 characters')
 })
 
-const checkUserExist = async () => {
-  const existedUser = await authStore.checkUserExist(currentUser.value.email)
-  isEmailExist.value = !!existedUser
-}
-
 const handleSubmit = async () => {
-  await authStore.login(currentUser.value)
+  await authStore.login()
 }
 </script>
 
 <template>
   <div class="mt-10">
     <VeeForm :validation-schema="loginSchema" v-slot="{ errors, meta }">
-      <div v-if="!isEmailExist && !errors.email" class="mb-4 text-red-500">
+      <div
+        v-if="!isUserInDb && !errors.email && currentUser.email !== ''"
+        class="mb-4 text-red-500"
+      >
         There is no such user, please register.
       </div>
       <div class="flex flex-col mb-6">
@@ -54,7 +50,7 @@ const handleSubmit = async () => {
             type="email"
             name="email"
             v-model="currentUser.email"
-            v-on:blur="checkUserExist()"
+            v-on:blur="authStore.checkUserExist(currentUser.email)"
             class="text-sm sm:text-base text-gray-600 placeholder-gray-400 pl-10 pr-4 rounded-lg border border-gray-400 w-full py-2 focus:outline-none focus:border-blue-400"
             placeholder="E-Mail Address"
           />
@@ -100,7 +96,7 @@ const handleSubmit = async () => {
       <div class="flex w-full mt-8">
         <button
           type="submit"
-          :disabled="!meta.valid || !isEmailExist"
+          :disabled="!meta.valid || !isUserInDb"
           class="flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-700 transition duration-150 ease-in-out enabled:hover:bg-teal-600 enabled:bg-teal-700 disabled:bg-gray-400 sm:rounded-lg text-white px-8 py-2 text-sm sm:text-base w-full"
           @click.prevent="handleSubmit"
         >

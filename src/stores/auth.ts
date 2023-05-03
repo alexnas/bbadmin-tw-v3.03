@@ -7,7 +7,8 @@ import AuthService from '@/services/AuthService'
 
 export const useAuthStore = defineStore('auth', () => {
   const isAuth = ref<boolean>(false)
-  const isRegistered = ref<boolean>(true)
+  const isLoginForm = ref<boolean>(true)
+  const isUserInDb = ref<boolean>(false)
   const currentUser = ref<IUser>({ ...initUser })
   const loggedUser = ref<IUser>({ ...initUser })
   const loading = ref<boolean>(false)
@@ -17,28 +18,27 @@ export const useAuthStore = defineStore('auth', () => {
     isAuth.value = true
   }
 
-  const resetAuthState = () => {
-    isAuth.value = false
-    isRegistered.value = false
-    loggedUser.value = { ...initUser }
+  const resetCurrentUser = () => {
+    currentUser.value = { ...initUser }
   }
 
-  const toggleRegistered = () => {
-    console.log('isRegistered.value 1', isRegistered.value)
-    isRegistered.value = !isRegistered.value
-    console.log('isRegistered.value 2', isRegistered.value)
+  const resetAuthState = () => {
+    isAuth.value = false
+    loggedUser.value = { ...initUser }
   }
 
   const setLoggedUser = (user: IUser) => {
     loggedUser.value = user
     isAuth.value = true
-    isRegistered.value = true
   }
 
   const checkUserExist = async (email: string) => {
+    if (currentUser.value.email.trim() === '') return
+
     try {
       loading.value = true
       const { data } = await AuthService.checkIfUserExist(email)
+      isUserInDb.value = !!data
 
       loading.value = false
       error.value = null
@@ -55,8 +55,8 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  const login = async (user: IUser) => {
-    const { email, password } = user
+  const login = async () => {
+    const { email, password } = currentUser.value
 
     try {
       loading.value = true
@@ -71,8 +71,11 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (err: any) {
       loading.value = false
       if (axios.isAxiosError(error)) {
-        error.value = err.message
+        error.value = err.error.message
         console.log('Error', err.message)
+      } else if (+err.response.status === 403) {
+        error.value = 'Error 403. Check your login and password.'
+        console.log('Error 403. Check your login and password.', err)
       } else {
         error.value = 'Unexpected error encountered'
         console.log('Error', err)
@@ -80,16 +83,16 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  const register = async (user: IUser) => {
-    const { email, name, password } = user
+  const register = async () => {
+    const { email, name, password } = currentUser.value
 
     try {
       loading.value = true
-      const response = await AuthService.register(email, name, password)
+      const { data } = await AuthService.register(email, name, password)
 
-      localStorage.setItem('token', response.data.token)
+      localStorage.setItem('token', data.token)
       isAuth.value = true
-      loggedUser.value = response.data.user
+      loggedUser.value = data.user
 
       loading.value = false
       error.value = null
@@ -130,12 +133,13 @@ export const useAuthStore = defineStore('auth', () => {
 
   return {
     isAuth,
-    isRegistered,
+    isLoginForm,
+    isUserInDb,
     currentUser,
     loggedUser,
     setAuthState,
     resetAuthState,
-    toggleRegistered,
+    resetCurrentUser,
     setLoggedUser,
     login,
     register,

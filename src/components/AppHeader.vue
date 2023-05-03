@@ -1,15 +1,21 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 import { activeMenuItem, inactiveMenuItem } from '@/assets/twClasses'
 
+const router = useRouter()
 const authStore = useAuthStore()
 const { isAuth, loggedUser } = storeToRefs(authStore)
 
 const handleLogout = () => {
   authStore.logout()
+}
+const handleLogin = () => {
+  authStore.resetCurrentUser()
+  router.push('/login')
 }
 
 interface IHeaderMenuItem {
@@ -120,31 +126,32 @@ const inactiveClass = ref(inactiveMenuItem)
         <div
           class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
         >
-          <!-- Profile dropdown -->
-          <div class="relative ml-3">
-            <router-link to="/login">
-              <button
-                type="button"
-                class="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                id="user-menu-button"
-                aria-expanded="false"
-                aria-haspopup="true"
-              >
-                <Icon
-                  v-if="isAuth"
-                  icon="bi:person-circle"
-                  :inline="true"
-                  class="w-6 h-6 min-w-[theme('spacing[5]')] text-3xl text-gray-400 hover:text-gray-100"
-                />
-                <Icon
-                  v-else
-                  icon="ant-design:login-outlined"
-                  :inline="true"
-                  class="w-6 h-6 min-w-[theme('spacing[5]')] text-3xl text-gray-400 hover:text-gray-100"
-                />
-              </button>
-              <span @click.prevent="handleLogout">{{ isAuth ? loggedUser.name : 'Guest' }}</span>
-            </router-link>
+          <!-- User on/off -->
+          <div class="relative ml-3 text-gray-400 hover:text-gray-100">
+            <button
+              type="button"
+              @click.prevent="handleLogin"
+              class="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+              id="user-menu-button"
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
+              <Icon
+                v-if="isAuth"
+                icon="bi:person-circle"
+                :inline="true"
+                class="w-6 h-6 min-w-[theme('spacing[5]')] text-3xl text-gray-400 hover:text-gray-100"
+              />
+              <Icon
+                v-else
+                icon="ant-design:login-outlined"
+                :inline="true"
+                class="w-6 h-6 min-w-[theme('spacing[5]')] text-3xl text-gray-400 hover:text-gray-100"
+              />
+            </button>
+            <button @click.prevent="handleLogout">
+              {{ isAuth ? loggedUser.name : 'Guest' }}
+            </button>
           </div>
         </div>
       </div>
