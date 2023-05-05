@@ -1,9 +1,12 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import type { IUser } from '@/types'
+import type { AuthResponse, IUser } from '@/types'
 import { initUser } from '@/stores/user'
 import AuthService from '@/services/AuthService'
+import { API_BASE_URL, REFRESH_ENDPOINT } from '@/constants/apiConstants'
+
+const refreshApi = `${API_BASE_URL}${REFRESH_ENDPOINT}`
 
 export const useAuthStore = defineStore('auth', () => {
   const isAuth = ref<boolean>(false)
@@ -62,10 +65,7 @@ export const useAuthStore = defineStore('auth', () => {
       loading.value = true
       const response = await AuthService.login(email, password)
 
-      localStorage.setItem('token', response.data.token)
-      isAuth.value = true
-      loggedUser.value = response.data.user
-
+      setupToken(response.data)
       loading.value = false
       error.value = null
     } catch (err: any) {
@@ -90,10 +90,7 @@ export const useAuthStore = defineStore('auth', () => {
       loading.value = true
       const { data } = await AuthService.register(email, name, password)
 
-      localStorage.setItem('token', data.token)
-      isAuth.value = true
-      loggedUser.value = data.user
-
+      setupToken(data)
       loading.value = false
       error.value = null
     } catch (err: any) {
@@ -113,10 +110,40 @@ export const useAuthStore = defineStore('auth', () => {
       loading.value = true
       await AuthService.logout()
 
-      localStorage.removeItem('token')
-      isAuth.value = false
-      loggedUser.value = {} as IUser
+      cancelToken()
+      loading.value = false
+      error.value = null
+    } catch (err: any) {
+      loading.value = false
+      if (axios.isAxiosError(error)) {
+        error.value = err.message
+        console.log('Error', err.message)
+      } else {
+        error.value = 'Unexpected error encountered'
+        console.log('Error', err)
+      }
+    }
+  }
 
+  const setupToken = (data: AuthResponse) => {
+    localStorage.setItem('token', data.token)
+    isAuth.value = true
+    loggedUser.value = { ...data.user, password: '' }
+  }
+
+  const cancelToken = () => {
+    localStorage.removeItem('token')
+    isAuth.value = false
+    loggedUser.value = { ...initUser } as IUser
+    currentUser.value = { ...initUser } as IUser
+  }
+
+  const checkAuth = async () => {
+    try {
+      loading.value = true
+      const { data } = await axios.get<AuthResponse>(refreshApi, { withCredentials: true })
+
+      setupToken(data)
       loading.value = false
       error.value = null
     } catch (err: any) {
@@ -144,6 +171,7 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     register,
     logout,
-    checkUserExist
+    checkUserExist,
+    checkAuth
   }
 })

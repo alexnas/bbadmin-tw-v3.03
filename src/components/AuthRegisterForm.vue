@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
 import { Form as VeeForm, Field as VeeField } from 'vee-validate'
 import * as Yup from 'yup'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 
+const router = useRouter()
 const authStore = useAuthStore()
 const { currentUser, isUserInDb } = storeToRefs(authStore)
 
@@ -34,6 +36,8 @@ const registerSchema = Yup.object().shape({
 
 const handleSubmit = async () => {
   await authStore.register()
+  authStore.resetCurrentUser()
+  router.push('/')
 }
 </script>
 
