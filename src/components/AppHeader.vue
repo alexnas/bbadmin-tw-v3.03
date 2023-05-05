@@ -10,10 +10,10 @@ const router = useRouter()
 const authStore = useAuthStore()
 const { isAuth, loggedUser } = storeToRefs(authStore)
 
-const handleLogout = () => {
-  authStore.logout()
-}
-const handleLogin = () => {
+const handleAuthUser = () => {
+  if (isAuth) {
+    authStore.logout()
+  }
   authStore.resetCurrentUser()
   router.push('/login')
 }
@@ -41,7 +41,7 @@ const inactiveClass = ref(inactiveMenuItem)
 </script>
 
 <template>
-  <nav class="bg-gray-800">
+  <nav class="bg-gray-800 text-sm">
     <div class="mx-auto px-2 sm:px-6 lg:px-8">
       <div class="relative flex h-16 items-center justify-between">
         <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -98,7 +98,7 @@ const inactiveClass = ref(inactiveMenuItem)
             <div class="flex space-x-4">
               <router-link
                 to="/"
-                class="text-white hover:text-orange-400 hover:bg-gray-700 rounded-md px-3 py-2 text-sm font-medium"
+                class="text-white hover:text-orange-400 hover:bg-gray-700 rounded-md px-3 py-2 text-lg font-medium"
                 aria-current="page"
                 >GBB Admin</router-link
               >
@@ -116,42 +116,43 @@ const inactiveClass = ref(inactiveMenuItem)
             >
           </div>
         </div>
-        <div
-          class="text-gray-100 mx-3 hover:text-orange-400 cursor-pointer"
-          @click.prevent="handleLogout"
-        >
-          Logout
-        </div>
 
-        <div
-          class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
-        >
+        <div class="ml-6">
           <!-- User on/off -->
-          <div class="relative ml-3 text-gray-400 hover:text-gray-100">
+          <div class="text-base text-teal-400">
+            {{ isAuth ? loggedUser.name : 'Guest' }}
+          </div>
+          <div class="flex justify-end">
             <button
-              type="button"
-              @click.prevent="handleLogin"
-              class="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-              id="user-menu-button"
-              aria-expanded="false"
-              aria-haspopup="true"
+              @click.prevent="handleAuthUser"
+              class="text-gray-400 uppercase hover:text-gray-100"
             >
-              <Icon
-                v-if="isAuth"
-                icon="bi:person-circle"
-                :inline="true"
-                class="w-6 h-6 min-w-[theme('spacing[5]')] text-3xl text-gray-400 hover:text-gray-100"
-              />
-              <Icon
-                v-else
-                icon="ant-design:login-outlined"
-                :inline="true"
-                class="w-6 h-6 min-w-[theme('spacing[5]')] text-3xl text-gray-400 hover:text-gray-100"
-              />
+              {{ isAuth ? 'Logout' : 'Login' }}
             </button>
-            <button @click.prevent="handleLogout">
-              {{ isAuth ? loggedUser.name : 'Guest' }}
-            </button>
+
+            <div class="mr-2 relative ml-3 text-gray-400 hover:text-gray-100">
+              <button
+                type="button"
+                @click.prevent="handleAuthUser"
+                class="rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                id="user-menu-button"
+                aria-expanded="false"
+                aria-haspopup="true"
+              >
+                <Icon
+                  v-if="isAuth"
+                  icon="bi:person-circle"
+                  :inline="true"
+                  class="w-6 h-6 min-w-[theme('spacing[5]')] text-3xl text-gray-400 hover:text-gray-100"
+                />
+                <Icon
+                  v-else
+                  icon="ant-design:login-outlined"
+                  :inline="true"
+                  class="w-6 h-6 min-w-[theme('spacing[5]')] text-3xl text-gray-400 hover:text-gray-100"
+                />
+              </button>
+            </div>
           </div>
         </div>
       </div>
