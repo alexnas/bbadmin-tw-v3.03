@@ -1,8 +1,9 @@
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import type { IUser } from '@/types'
 import { API_BASE_URL, USER_ENDPOINT } from '@/constants/apiConstants'
+import UserService from '@/services/UserService'
 
 const userApi = `${API_BASE_URL}${USER_ENDPOINT}`
 export const initUser: IUser = {
@@ -26,7 +27,7 @@ export const useUserStore = defineStore('user', () => {
   const getUsers = async () => {
     try {
       loading.value = true
-      const { data } = await axios.get(userApi)
+      const { data } = await UserService.fetchUsers()
       users.value = data
       loading.value = false
       error.value = null
@@ -146,10 +147,6 @@ export const useUserStore = defineStore('user', () => {
       }
     }
   }
-
-  onMounted(async () => {
-    await getUsers()
-  })
 
   return {
     users,
