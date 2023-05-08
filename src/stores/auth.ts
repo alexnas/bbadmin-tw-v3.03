@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import type { AuthResponse, IUser } from '@/types'
@@ -9,7 +9,6 @@ import { API_BASE_URL, REFRESH_ENDPOINT } from '@/constants/apiConstants'
 const refreshApi = `${API_BASE_URL}${REFRESH_ENDPOINT}`
 
 export const useAuthStore = defineStore('auth', () => {
-  const isAuth = ref<boolean>(false)
   const isLoginForm = ref<boolean>(true)
   const isUserInDb = ref<boolean>(false)
   const currentUser = ref<IUser>({ ...initUser })
@@ -17,22 +16,12 @@ export const useAuthStore = defineStore('auth', () => {
   const loading = ref<boolean>(false)
   const error = ref<string | null>(null)
 
-  const setAuthState = () => {
-    isAuth.value = true
-  }
+  const isAuth = computed(() => {
+    return loggedUser.value && !!loggedUser.value.email
+  })
 
   const resetCurrentUser = () => {
     currentUser.value = { ...initUser }
-  }
-
-  const resetAuthState = () => {
-    isAuth.value = false
-    loggedUser.value = { ...initUser }
-  }
-
-  const setLoggedUser = (user: IUser) => {
-    loggedUser.value = user
-    isAuth.value = true
   }
 
   const checkUserExist = async (email: string) => {
@@ -127,15 +116,12 @@ export const useAuthStore = defineStore('auth', () => {
 
   const setupToken = (data: AuthResponse) => {
     localStorage.setItem('token', data.token)
-    isAuth.value = true
     loggedUser.value = { ...data.user, password: '' }
   }
 
   const cancelToken = () => {
     localStorage.removeItem('token')
-    isAuth.value = false
     loggedUser.value = { ...initUser } as IUser
-    currentUser.value = { ...initUser } as IUser
   }
 
   const checkAuth = async () => {
@@ -164,10 +150,7 @@ export const useAuthStore = defineStore('auth', () => {
     isUserInDb,
     currentUser,
     loggedUser,
-    setAuthState,
-    resetAuthState,
     resetCurrentUser,
-    setLoggedUser,
     login,
     register,
     logout,

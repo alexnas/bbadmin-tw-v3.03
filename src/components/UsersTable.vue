@@ -17,6 +17,7 @@ const roleStore = useRoleStore()
 const { roles } = storeToRefs(roleStore)
 
 onMounted(() => {
+  userStore.getUsers()
   userStore.resetCurrentUser()
 })
 
