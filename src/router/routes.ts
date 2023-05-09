@@ -19,37 +19,55 @@ const routes: Array<RouteRecordRaw> = [
     path: '/province',
     name: 'Provinces',
     component: () => import('../views/ProvincesView.vue'),
-    meta: { layout: AdminLayout }
+    meta: {
+      layout: AdminLayout,
+      authRequired: true
+    }
   },
   {
     path: '/city',
     name: 'Cities',
     component: () => import('../views/CitiesView.vue'),
-    meta: { layout: AdminLayout }
+    meta: {
+      layout: AdminLayout,
+      authRequired: true
+    }
   },
   {
     path: '/company',
     name: 'Companies',
     component: () => import('../views/CompaniesView.vue'),
-    meta: { layout: AdminLayout }
+    meta: {
+      layout: AdminLayout,
+      authRequired: true
+    }
   },
   {
     path: '/route',
     name: 'Routes',
     component: () => import('../views/RoutesView.vue'),
-    meta: { layout: AdminLayout }
+    meta: {
+      layout: AdminLayout,
+      authRequired: true
+    }
   },
   {
     path: '/user',
     name: 'Users',
     component: () => import('../views/UsersView.vue'),
-    meta: { layout: AdminLayout }
+    meta: {
+      layout: AdminLayout,
+      authRequired: true
+    }
   },
   {
     path: '/role',
     name: 'Roles',
     component: () => import('../views/RolesView.vue'),
-    meta: { layout: AdminLayout }
+    meta: {
+      layout: AdminLayout,
+      authRequired: true
+    }
   },
   {
     path: '/login',
