@@ -9,6 +9,7 @@ Admin application for GBB project.
 - Vite 4
 - Pinia
 - Vue Router 4
+- JWT Auth
 - TailwindCss
 - Iconify
 
