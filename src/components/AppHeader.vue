@@ -4,11 +4,19 @@ import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
+import { useRoleStore } from '@/stores/role'
+import { useItemNameById } from '@/composables/ItemsById'
 import { activeMenuItem, inactiveMenuItem } from '@/assets/twClasses'
 
+const roleStore = useRoleStore()
+const { roles } = storeToRefs(roleStore)
 const router = useRouter()
 const authStore = useAuthStore()
 const { isAuth, loggedUser } = storeToRefs(authStore)
+
+const roleNameFromId = () => {
+  return useItemNameById(loggedUser.value.roleId, roles.value)
+}
 
 const handleAuthUser = () => {
   if (isAuth) {
@@ -130,10 +138,9 @@ const inactiveClass = ref(inactiveMenuItem)
               {{ isAuth ? 'Logout' : 'Login' }}
             </button>
 
-            <div class="mr-2 relative ml-3 text-gray-400 hover:text-gray-100">
+            <div class="mr-2 relative ml-3 text-gray-400">
               <button
                 type="button"
-                @click.prevent="handleAuthUser"
                 class="rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                 id="user-menu-button"
                 aria-expanded="false"
@@ -143,16 +150,19 @@ const inactiveClass = ref(inactiveMenuItem)
                   v-if="isAuth"
                   icon="bi:person-circle"
                   :inline="true"
-                  class="w-6 h-6 min-w-[theme('spacing[5]')] text-3xl text-gray-400 hover:text-gray-100"
+                  class="w-6 h-6 min-w-[theme('spacing[5]')] text-3xl text-gray-400 cursor-text"
                 />
                 <Icon
                   v-else
                   icon="ant-design:login-outlined"
                   :inline="true"
-                  class="w-6 h-6 min-w-[theme('spacing[5]')] text-3xl text-gray-400 hover:text-gray-100"
+                  class="w-6 h-6 min-w-[theme('spacing[5]')] text-3xl text-teal-400 cursor-text"
                 />
               </button>
             </div>
+            <button class="text-gray-400 uppercase cursor-text">
+              {{ isAuth ? roleNameFromId() : '' }}
+            </button>
           </div>
         </div>
       </div>
