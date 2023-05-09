@@ -119,7 +119,7 @@ const inactiveClass = ref(inactiveMenuItem)
 
         <div class="ml-6">
           <!-- User on/off -->
-          <div class="text-base text-teal-400">
+          <div class="flex justify-center text-base text-teal-400">
             {{ isAuth ? loggedUser.name : 'Guest' }}
           </div>
           <div class="flex justify-end">
