@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import { Icon } from '@iconify/vue'
@@ -14,9 +14,9 @@ const router = useRouter()
 const authStore = useAuthStore()
 const { isAuth, loggedUser } = storeToRefs(authStore)
 
-const roleNameFromId = () => {
+const roleNameFromId = computed(() => {
   return useItemNameById(loggedUser.value.roleId, roles.value)
-}
+})
 
 const handleAuthUser = () => {
   if (isAuth) {
@@ -161,7 +161,7 @@ const inactiveClass = ref(inactiveMenuItem)
               </button>
             </div>
             <button class="text-gray-400 uppercase cursor-text">
-              {{ isAuth ? roleNameFromId() : '' }}
+              {{ isAuth ? roleNameFromId : '' }}
             </button>
           </div>
         </div>
