@@ -20,7 +20,7 @@ const toggleFormHint = computed(() => {
 })
 
 const toggleIsLoginForm = () => {
-  authStore.resetCurrentUser()
+  authStore.resetCurrentAuthUser()
   isLoginForm.value = !isLoginForm.value
 }
 </script>

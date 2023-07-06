@@ -24,6 +24,7 @@ const toggleMenu = () => {
 }
 
 const handleAuthUser = () => {
+  console.log('handleAuthUser', isAuth.value)
   if (isAuth.value) {
     authStore.logout()
   }
