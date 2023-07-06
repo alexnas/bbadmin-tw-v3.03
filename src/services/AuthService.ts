@@ -1,6 +1,6 @@
 import $api from '@/api'
 import type { AxiosResponse } from 'axios'
-import type { AuthResponse } from '@/types'
+import type { AuthResponse, IUser } from '@/types'
 import {
   CHECK_USER_ENDPOINT,
   LOGIN_ENDPOINT,
@@ -25,7 +25,7 @@ export default class AuthService {
     return $api.post(LOGOUT_ENDPOINT)
   }
 
-  static async checkIfUserExist(email: string): Promise<AxiosResponse<AuthResponse>> {
-    return $api.get<AuthResponse>(`${CHECK_USER_ENDPOINT}?email=${email}`)
+  static async checkIfUserExist(email: string): Promise<AxiosResponse<IUser>> {
+    return $api.get<IUser>(`${CHECK_USER_ENDPOINT}?email=${email}`)
   }
 }

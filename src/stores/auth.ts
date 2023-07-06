@@ -10,7 +10,7 @@ const refreshApi = `${API_BASE_URL}${REFRESH_ENDPOINT}`
 
 export const useAuthStore = defineStore('auth', () => {
   const isLoginForm = ref<boolean>(true)
-  const isUserInDb = ref<boolean>(false)
+  const isUserInDb = ref<boolean>(true)
   const currentUser = ref<IUser>({ ...initUser })
   const loggedUser = ref<IUser>({ ...initUser })
   const loading = ref<boolean>(false)
@@ -30,19 +30,27 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       loading.value = true
       const { data } = await AuthService.checkIfUserExist(email)
-      isUserInDb.value = !!data
+      if (data?.id) {
+        isUserInDb.value = true
+      } else {
+        isUserInDb.value = false
+      }
 
       loading.value = false
       error.value = null
       return data
     } catch (err: any) {
+      console.log('Error:', err)
+
       loading.value = false
       if (axios.isAxiosError(error)) {
         error.value = err.message
+        isUserInDb.value = false
         console.log('Error', err.message)
       } else {
         error.value = 'Unexpected error encountered'
-        console.log('Error', err)
+        isUserInDb.value = false
+        console.log('Error:', err)
       }
     }
   }
