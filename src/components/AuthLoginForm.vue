@@ -8,7 +8,7 @@ import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const { currentUser, isUserInDb } = storeToRefs(authStore)
+const { currentAuthUser, isUserInDb } = storeToRefs(authStore)
 
 const loginSchema = Yup.object().shape({
   email: Yup.string().label('Email').required().email('Email should fit format "aaa@aaa.aaa" '),
@@ -21,7 +21,7 @@ const loginSchema = Yup.object().shape({
 
 const handleSubmit = async () => {
   await authStore.login()
-  authStore.resetCurrentUser()
+  authStore.resetCurrentAuthUser()
   router.push('/')
 }
 </script>
@@ -30,7 +30,7 @@ const handleSubmit = async () => {
   <div class="mt-10">
     <VeeForm :validation-schema="loginSchema" v-slot="{ errors, meta }">
       <div
-        v-if="!isUserInDb && !errors.email && currentUser.email !== ''"
+        v-if="!isUserInDb && !errors.email && currentAuthUser.email !== ''"
         class="mb-4 text-red-500"
       >
         There is no such user, please register.
@@ -53,8 +53,8 @@ const handleSubmit = async () => {
           <VeeField
             type="email"
             name="email"
-            v-model="currentUser.email"
-            v-on:blur="authStore.checkUserExist(currentUser.email)"
+            v-model="currentAuthUser.email"
+            v-on:blur="authStore.checkUserExist(currentAuthUser.email)"
             class="text-sm sm:text-base text-gray-600 placeholder-gray-400 pl-10 pr-4 rounded-lg border border-gray-400 w-full py-2 focus:outline-none focus:border-blue-400"
             placeholder="E-Mail Address"
           />
@@ -81,7 +81,7 @@ const handleSubmit = async () => {
           <VeeField
             type="password"
             name="password"
-            v-model="currentUser.password"
+            v-model="currentAuthUser.password"
             class="text-sm sm:text-base text-gray-600 placeholder-gray-400 pl-10 pr-4 rounded-lg border border-gray-400 w-full py-2 focus:outline-none focus:border-blue-400"
             placeholder="Password"
           />

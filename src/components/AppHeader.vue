@@ -27,7 +27,7 @@ const handleAuthUser = () => {
   if (isAuth.value) {
     authStore.logout()
   }
-  authStore.resetCurrentUser()
+  authStore.resetCurrentAuthUser()
   router.push('/login')
 }
 
