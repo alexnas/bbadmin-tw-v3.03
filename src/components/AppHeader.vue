@@ -24,7 +24,7 @@ const toggleMenu = () => {
 }
 
 const handleAuthUser = () => {
-  if (isAuth) {
+  if (isAuth.value) {
     authStore.logout()
   }
   authStore.resetCurrentUser()
