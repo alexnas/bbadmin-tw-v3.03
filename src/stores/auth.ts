@@ -11,7 +11,7 @@ const refreshApi = `${API_BASE_URL}${REFRESH_ENDPOINT}`
 export const useAuthStore = defineStore('auth', () => {
   const isLoginForm = ref<boolean>(true)
   const isUserInDb = ref<boolean>(true)
-  const currentUser = ref<IUser>({ ...initUser })
+  const currentAuthUser = ref<IUser>({ ...initUser })
   const loggedUser = ref<IUser>({ ...initUser })
   const loading = ref<boolean>(false)
   const error = ref<string | null>(null)
@@ -20,12 +20,12 @@ export const useAuthStore = defineStore('auth', () => {
     return loggedUser.value && !!loggedUser.value.email
   })
 
-  const resetCurrentUser = () => {
-    currentUser.value = { ...initUser }
+  const resetCurrentAuthUser = () => {
+    currentAuthUser.value = { ...initUser }
   }
 
   const checkUserExist = async (email: string) => {
-    if (currentUser.value.email.trim() === '') return
+    if (currentAuthUser.value.email.trim() === '') return
 
     try {
       loading.value = true
@@ -56,7 +56,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const login = async () => {
-    const { email, password } = currentUser.value
+    const { email, password } = currentAuthUser.value
 
     try {
       loading.value = true
@@ -81,7 +81,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const register = async () => {
-    const { email, name, password } = currentUser.value
+    const { email, name, password } = currentAuthUser.value
 
     try {
       loading.value = true
@@ -156,9 +156,9 @@ export const useAuthStore = defineStore('auth', () => {
     isAuth,
     isLoginForm,
     isUserInDb,
-    currentUser,
+    currentAuthUser,
     loggedUser,
-    resetCurrentUser,
+    resetCurrentAuthUser,
     login,
     register,
     logout,

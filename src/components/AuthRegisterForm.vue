@@ -8,7 +8,7 @@ import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const { currentUser, isUserInDb } = storeToRefs(authStore)
+const { currentAuthUser, isUserInDb } = storeToRefs(authStore)
 
 const registerSchema = Yup.object().shape({
   id: Yup.number(),
@@ -36,7 +36,7 @@ const registerSchema = Yup.object().shape({
 
 const handleSubmit = async () => {
   await authStore.register()
-  authStore.resetCurrentUser()
+  authStore.resetCurrentAuthUser()
   router.push('/')
 }
 </script>
@@ -44,7 +44,10 @@ const handleSubmit = async () => {
 <template>
   <div class="mt-10">
     <VeeForm :validation-schema="registerSchema" v-slot="{ errors, meta }">
-      <div v-if="isUserInDb && !errors.email && currentUser.email !== ''" class="mb-4 text-red-500">
+      <div
+        v-if="isUserInDb && !errors.email && currentAuthUser.email !== ''"
+        class="mb-4 text-red-500"
+      >
         This email is registered, type another one.
       </div>
       <div class="flex flex-col mb-6">
@@ -65,8 +68,8 @@ const handleSubmit = async () => {
           <VeeField
             type="email"
             name="email"
-            v-model="currentUser.email"
-            v-on:blur="authStore.checkUserExist(currentUser.email)"
+            v-model="currentAuthUser.email"
+            v-on:blur="authStore.checkUserExist(currentAuthUser.email)"
             class="text-sm sm:text-base text-gray-600 placeholder-gray-400 pl-10 pr-4 rounded-lg border border-gray-400 w-full py-2 focus:outline-none focus:border-blue-400"
             placeholder="E-Mail Address"
           />
@@ -90,7 +93,7 @@ const handleSubmit = async () => {
           <VeeField
             type="text"
             name="name"
-            v-model="currentUser.name"
+            v-model="currentAuthUser.name"
             class="text-sm sm:text-base text-gray-600 placeholder-gray-400 pl-10 pr-4 rounded-lg border border-gray-400 w-full py-2 focus:outline-none focus:border-blue-400"
             placeholder="Name"
           />
@@ -118,7 +121,7 @@ const handleSubmit = async () => {
           <VeeField
             type="password"
             name="password"
-            v-model="currentUser.password"
+            v-model="currentAuthUser.password"
             class="text-sm sm:text-base text-gray-600 placeholder-gray-400 pl-10 pr-4 rounded-lg border border-gray-400 w-full py-2 focus:outline-none focus:border-blue-400"
             placeholder="Password"
           />
@@ -168,7 +171,7 @@ const handleSubmit = async () => {
         <VeeField
           name="id"
           type="number"
-          v-model="currentUser.id"
+          v-model="currentAuthUser.id"
           :disabled="true"
           class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           placeholder="User id"

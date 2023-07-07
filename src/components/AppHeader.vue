@@ -24,10 +24,11 @@ const toggleMenu = () => {
 }
 
 const handleAuthUser = () => {
+  console.log('handleAuthUser', isAuth.value)
   if (isAuth.value) {
     authStore.logout()
   }
-  authStore.resetCurrentUser()
+  authStore.resetCurrentAuthUser()
   router.push('/login')
 }
 
