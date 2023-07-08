@@ -97,7 +97,6 @@ const handleSubmit = async () => {
           This email is registered. Put another one.
         </div>
       </div>
-
       <div class="mb-3">
         <label class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
           >Name*</label
