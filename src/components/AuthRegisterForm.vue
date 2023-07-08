@@ -46,8 +46,8 @@ const handleSubmit = async () => {
     <VeeForm :validation-schema="registerSchema" v-slot="{ errors, meta }">
       <div class="mb-4 text-red-500 text-sm">
         <div v-if="!isDbConnected">{{ dbConnectionMsg }} (Internal Server Error).</div>
-        <div v-else-if="!isUserInDb && !errors.email && currentAuthUser.email !== ''">
-          There is no such user, please register.
+        <div v-else-if="isUserInDb && !errors.email && currentAuthUser.email !== ''">
+          This email is registered. Put another one.
         </div>
       </div>
 

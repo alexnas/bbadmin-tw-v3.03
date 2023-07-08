@@ -48,7 +48,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const checkUserExist = async (email: string) => {
     checkDbConnection()
-    if (currentAuthUser.value.email.trim() === '' || isDbConnected.value === false) {
+    if (isDbConnected.value === false || email.trim() === '') {
       return
     }
 
