@@ -11,6 +11,8 @@ const refreshApi = `${API_BASE_URL}${REFRESH_ENDPOINT}`
 export const useAuthStore = defineStore('auth', () => {
   const isLoginForm = ref<boolean>(true)
   const isUserInDb = ref<boolean>(true)
+  const isDbConnected = ref<boolean>(true)
+  const dbConnectionMsg = ref<string>('')
   const currentAuthUser = ref<IUser>({ ...initUser })
   const loggedUser = ref<IUser>({ ...initUser })
   const loading = ref<boolean>(false)
@@ -24,8 +26,31 @@ export const useAuthStore = defineStore('auth', () => {
     currentAuthUser.value = { ...initUser }
   }
 
+  const checkDbConnection = async () => {
+    try {
+      const { data } = await AuthService.checkIfDbConnected()
+      isDbConnected.value = data.isDbConnected
+      dbConnectionMsg.value = data.dbConnectionMsg
+    } catch (err: any) {
+      loading.value = false
+      isDbConnected.value = false
+      dbConnectionMsg.value = 'Server connection was lost'
+
+      if (axios.isAxiosError(error)) {
+        error.value = err.message
+        console.log('Error', err.message)
+      } else {
+        error.value = 'Unexpected error encountered'
+        console.log('Error', err)
+      }
+    }
+  }
+
   const checkUserExist = async (email: string) => {
-    if (currentAuthUser.value.email.trim() === '') return
+    checkDbConnection()
+    if (currentAuthUser.value.email.trim() === '' || isDbConnected.value === false) {
+      return
+    }
 
     try {
       loading.value = true
@@ -158,11 +183,14 @@ export const useAuthStore = defineStore('auth', () => {
     isUserInDb,
     currentAuthUser,
     loggedUser,
+    isDbConnected,
+    dbConnectionMsg,
     resetCurrentAuthUser,
     login,
     register,
     logout,
     checkUserExist,
-    checkAuth
+    checkAuth,
+    checkDbConnection
   }
 })
