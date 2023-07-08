@@ -9,9 +9,12 @@ import { useRoleStore } from '@/stores/role'
 import { formatDateTime } from '@/tools/formatDate'
 import BaseModal from '@/components/BaseModal.vue'
 import CustomCheckbox from '@/components/CustomCheckbox.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
+const authStore = useAuthStore()
+const { currentAuthUser, isUserInDb, isDbConnected, dbConnectionMsg } = storeToRefs(authStore)
 const modalStore = useModalStore()
 const { isNewItem, isViewItem } = storeToRefs(modalStore)
 const roleStore = useRoleStore()
@@ -88,6 +91,13 @@ const handleSubmit = async () => {
       :validation-schema="userSchema"
       v-slot="{ errors, meta }"
     >
+      <div class="mb-4 text-red-500 text-sm">
+        <div v-if="!isDbConnected">{{ dbConnectionMsg }} (Internal Server Error).</div>
+        <div v-else-if="isUserInDb && !errors.email && currentUser.email !== ''">
+          This email is registered. Put another one.
+        </div>
+      </div>
+
       <div class="mb-3">
         <label class="text-gray-500 pl-3 text-sm uppercase font-bold leading-tight tracking-normal"
           >Name*</label
@@ -112,6 +122,7 @@ const handleSubmit = async () => {
           type="text"
           v-model="currentUser.email"
           :disabled="isViewItem"
+          v-on:blur="authStore.checkUserExist(currentUser.email)"
           class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           placeholder="User name"
         />
