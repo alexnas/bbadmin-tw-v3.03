@@ -1,12 +1,19 @@
 import $api from '@/api'
 import type { AxiosResponse } from 'axios'
 import type { AuthResponse, IUser } from '@/types'
+
 import {
-  CHECK_USER_ENDPOINT,
   LOGIN_ENDPOINT,
   LOGOUT_ENDPOINT,
-  REGISTER_ENDPOINT
+  REGISTER_ENDPOINT,
+  CHECK_USER_ENDPOINT,
+  IS_CONNECTED_ENDPOINT
 } from '@/constants/apiConstants'
+
+interface IConnected {
+  isDbConnected: boolean
+  dbConnectionMsg: string
+}
 
 export default class AuthService {
   static async login(email: string, password: string): Promise<AxiosResponse<AuthResponse>> {
@@ -27,5 +34,9 @@ export default class AuthService {
 
   static async checkIfUserExist(email: string): Promise<AxiosResponse<IUser>> {
     return $api.get<IUser>(`${CHECK_USER_ENDPOINT}?email=${email}`)
+  }
+
+  static async checkIfDbConnected(): Promise<AxiosResponse<IConnected>> {
+    return $api.get<IConnected>(`${IS_CONNECTED_ENDPOINT}`)
   }
 }

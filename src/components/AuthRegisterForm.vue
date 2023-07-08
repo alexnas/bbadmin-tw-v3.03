@@ -8,7 +8,7 @@ import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const { currentAuthUser, isUserInDb } = storeToRefs(authStore)
+const { currentAuthUser, isUserInDb, isDbConnected, dbConnectionMsg } = storeToRefs(authStore)
 
 const registerSchema = Yup.object().shape({
   id: Yup.number(),
@@ -44,12 +44,13 @@ const handleSubmit = async () => {
 <template>
   <div class="mt-10">
     <VeeForm :validation-schema="registerSchema" v-slot="{ errors, meta }">
-      <div
-        v-if="isUserInDb && !errors.email && currentAuthUser.email !== ''"
-        class="mb-4 text-red-500"
-      >
-        This email is registered, type another one.
+      <div class="mb-4 text-red-500 text-sm">
+        <div v-if="!isDbConnected">{{ dbConnectionMsg }} (Internal Server Error).</div>
+        <div v-else-if="!isUserInDb && !errors.email && currentAuthUser.email !== ''">
+          There is no such user, please register.
+        </div>
       </div>
+
       <div class="flex flex-col mb-6">
         <label for="email" class="mb-1 text-xs sm:text-sm tracking-wide text-gray-600"
           >E-Mail Address:</label
