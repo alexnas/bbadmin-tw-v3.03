@@ -14,7 +14,7 @@ import { useAuthStore } from '@/stores/auth'
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
 const authStore = useAuthStore()
-const { currentAuthUser, isUserInDb, isDbConnected, dbConnectionMsg } = storeToRefs(authStore)
+const { isUserInDb, isDbConnected, dbConnectionMsg } = storeToRefs(authStore)
 const modalStore = useModalStore()
 const { isNewItem, isViewItem } = storeToRefs(modalStore)
 const roleStore = useRoleStore()
@@ -118,7 +118,7 @@ const handleSubmit = async () => {
         >
         <VeeField
           name="email"
-          type="text"
+          type="email"
           v-model="currentUser.email"
           :disabled="isViewItem"
           v-on:blur="authStore.checkUserExist(currentUser.email)"
