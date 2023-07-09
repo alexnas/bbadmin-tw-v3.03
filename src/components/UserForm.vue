@@ -12,7 +12,7 @@ import CustomCheckbox from '@/components/CustomCheckbox.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const userStore = useUserStore()
-const { currentUser } = storeToRefs(userStore)
+const { currentUser, preEditedUser } = storeToRefs(userStore)
 const authStore = useAuthStore()
 const { isUserInDb, isDbConnected, dbConnectionMsg } = storeToRefs(authStore)
 const modalStore = useModalStore()
@@ -93,7 +93,14 @@ const handleSubmit = async () => {
     >
       <div class="mb-4 text-red-500 text-sm">
         <div v-if="!isDbConnected">{{ dbConnectionMsg }} (Internal Server Error).</div>
-        <div v-else-if="isUserInDb && !errors.email && currentUser.email !== ''">
+        <div
+          v-else-if="
+            isUserInDb &&
+            !errors.email &&
+            currentUser.email !== '' &&
+            currentUser.email !== preEditedUser.email
+          "
+        >
           This email is registered. Put another one.
         </div>
       </div>
@@ -242,7 +249,11 @@ const handleSubmit = async () => {
         </button>
         <button
           v-if="!isViewItem"
-          :disabled="!meta.valid || isUserInDb || !isDbConnected"
+          :disabled="
+            !meta.valid ||
+            (isUserInDb && currentUser.email !== preEditedUser.email) ||
+            !isDbConnected
+          "
           class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-700 transition duration-150 ease-in-out enabled:hover:bg-teal-600 enabled:bg-teal-700 disabled:bg-gray-400 sm:rounded-lg text-white px-8 py-2 text-sm"
           type="submit"
           @click.prevent="handleSubmit"
