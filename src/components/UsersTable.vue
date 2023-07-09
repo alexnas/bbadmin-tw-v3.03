@@ -85,7 +85,8 @@ const handleDeleteClick = async (user: IUser) => {
           <td class="px-4 py-3">{{ idx + 1 }}</td>
           <td class="px-4 py-3">{{ user.id }}</td>
           <td class="px-4 py-3">
-            {{ user.isActive ? 'TRUE' : 'FALSE' }}
+            <Icon v-if="user.isActive" icon="mdi:tick" class="text-3xl text-green-400" />
+            <Icon v-else icon="mdi:cancel" class="text-3xl text-red-300" />
           </td>
           <td class="px-4 py-3">{{ user.name }}</td>
           <td class="px-4 py-3">{{ user.email }}</td>
