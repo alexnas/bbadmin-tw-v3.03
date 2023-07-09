@@ -14,7 +14,7 @@ import { useAuthStore } from '@/stores/auth'
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
 const authStore = useAuthStore()
-const { currentAuthUser, isUserInDb, isDbConnected, dbConnectionMsg } = storeToRefs(authStore)
+const { isUserInDb, isDbConnected, dbConnectionMsg } = storeToRefs(authStore)
 const modalStore = useModalStore()
 const { isNewItem, isViewItem } = storeToRefs(modalStore)
 const roleStore = useRoleStore()
@@ -118,7 +118,7 @@ const handleSubmit = async () => {
         >
         <VeeField
           name="email"
-          type="text"
+          type="email"
           v-model="currentUser.email"
           :disabled="isViewItem"
           v-on:blur="authStore.checkUserExist(currentUser.email)"
@@ -242,7 +242,7 @@ const handleSubmit = async () => {
         </button>
         <button
           v-if="!isViewItem"
-          :disabled="!meta.valid"
+          :disabled="!meta.valid || isUserInDb || !isDbConnected"
           class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-700 transition duration-150 ease-in-out enabled:hover:bg-teal-600 enabled:bg-teal-700 disabled:bg-gray-400 sm:rounded-lg text-white px-8 py-2 text-sm"
           type="submit"
           @click.prevent="handleSubmit"
