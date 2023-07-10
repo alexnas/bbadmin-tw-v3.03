@@ -12,7 +12,7 @@ import CityForm from '@/components/CityForm.vue'
 import { useItemNameById } from '@/composables/ItemsById'
 
 const cityStore = useCityStore()
-const { cities } = storeToRefs(cityStore)
+const { filteredCities, filterStr } = storeToRefs(cityStore)
 const modalStore = useModalStore()
 const provinceStore = useProvinceStore()
 const { provinces } = storeToRefs(provinceStore)
@@ -49,7 +49,16 @@ const handleDeleteClick = async (city: ICity) => {
 </script>
 
 <template>
-  <div class="flex items-center justify-end -mt-6 h-24">
+  <div class="flex items-center justify-between mt-1 h-24">
+    <div class="flex">
+      <input
+        type="text"
+        v-model="filterStr"
+        class="mb- max-w-xs text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
+        placeholder="Search pattern"
+      />
+    </div>
+
     <button @click.stop="handleAddNewClick()" type="button">
       <Icon
         class="text-5xl text-green-400 hover:text-green-500"
@@ -77,7 +86,7 @@ const handleDeleteClick = async (city: ICity) => {
       </thead>
       <tbody>
         <tr
-          v-for="(city, idx) in cities"
+          v-for="(city, idx) in filteredCities"
           :key="city.name"
           class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
         >

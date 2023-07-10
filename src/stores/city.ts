@@ -1,7 +1,9 @@
-import { onMounted, ref } from 'vue'
-import { defineStore } from 'pinia'
+import { computed, onMounted, ref } from 'vue'
+import { defineStore, storeToRefs } from 'pinia'
 import axios from 'axios'
 import type { ICity } from '@/types'
+import { useProvinceStore } from '@/stores/province'
+import { useItemNameById } from '@/composables/ItemsById'
 import { API_BASE_URL, CITY_ENDPOINT } from '@/constants/apiConstants'
 
 const cityApi = `${API_BASE_URL}${CITY_ENDPOINT}`
@@ -15,11 +17,28 @@ const initCity: ICity = {
 }
 
 export const useCityStore = defineStore('city', () => {
+  const provinceStore = useProvinceStore()
+  const { provinces } = storeToRefs(provinceStore)
   const cities = ref<ICity[]>([])
   const currentCity = ref<ICity>({ ...initCity })
   const preEditedCity = ref<ICity>({ ...initCity })
   const loading = ref<boolean>(false)
   const error = ref<string | null>(null)
+  const filterStr = ref<string>('')
+
+  const filteredCities = computed(() => {
+    const filtered = cities.value.filter((item) => {
+      if (filterStr.value.trim() === '') return true
+      const isFound =
+        item.name.toLowerCase().indexOf(filterStr.value.toLowerCase()) >= 0 ||
+        item.description.toLowerCase().indexOf(filterStr.value.toLowerCase()) >= 0 ||
+        useItemNameById(item.provinceId, provinces.value)
+          .toLowerCase()
+          .indexOf(filterStr.value.toLowerCase()) >= 0
+      return isFound
+    })
+    return filtered
+  })
 
   const getCities = async () => {
     try {
@@ -164,6 +183,8 @@ export const useCityStore = defineStore('city', () => {
     preEditedCity,
     loading,
     error,
+    filterStr,
+    filteredCities,
     getCities,
     resetCurrentCity,
     setCurrentCity,
