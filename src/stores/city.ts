@@ -1,8 +1,11 @@
-import { onMounted, ref } from 'vue'
-import { defineStore } from 'pinia'
+import { computed, onMounted, ref } from 'vue'
+import { defineStore, storeToRefs } from 'pinia'
 import axios from 'axios'
-import type { ICity } from '@/types'
+import type { CityKeys, ICity } from '@/types'
+import { useProvinceStore } from '@/stores/province'
+import { useItemNameById } from '@/composables/ItemsById'
 import { API_BASE_URL, CITY_ENDPOINT } from '@/constants/apiConstants'
+import { makeSortedByProperty } from '@/tools/commonTools'
 
 const cityApi = `${API_BASE_URL}${CITY_ENDPOINT}`
 const initCity: ICity = {
@@ -15,11 +18,50 @@ const initCity: ICity = {
 }
 
 export const useCityStore = defineStore('city', () => {
+  const provinceStore = useProvinceStore()
+  const { provinces } = storeToRefs(provinceStore)
   const cities = ref<ICity[]>([])
   const currentCity = ref<ICity>({ ...initCity })
   const preEditedCity = ref<ICity>({ ...initCity })
   const loading = ref<boolean>(false)
   const error = ref<string | null>(null)
+  const sortProperty = ref<CityKeys>('name')
+  const sortOrder = ref<'asc' | 'desc'>('asc')
+  const filterStr = ref<string>('')
+
+  const filteredCities = computed(() => {
+    const filtered = cities.value.filter((item) => {
+      if (filterStr.value.trim() === '') return true
+      const isFound =
+        item.name.toLowerCase().indexOf(filterStr.value.toLowerCase()) >= 0 ||
+        item.description.toLowerCase().indexOf(filterStr.value.toLowerCase()) >= 0 ||
+        useItemNameById(item.provinceId, provinces.value)
+          .toLowerCase()
+          .indexOf(filterStr.value.toLowerCase()) >= 0
+      return isFound
+    })
+    return filtered
+  })
+
+  const sortedCities = computed(() => {
+    const sorted = [...filteredCities.value]
+    if (sortProperty.value !== 'provinceId') {
+      sorted.sort(makeSortedByProperty(sortProperty.value, sortOrder.value))
+    } else {
+      sorted.sort(sortedByProvinceId(sortProperty.value, sortOrder.value))
+    }
+    return sorted
+  })
+
+  function sortedByProvinceId(sortProperty: keyof ICity, sortOrder: 'asc' | 'desc') {
+    const compareFn = (a: ICity, b: ICity) => {
+      const val1 = useItemNameById(a.provinceId, provinces.value)
+      const val2 = useItemNameById(b.provinceId, provinces.value)
+      const order = sortOrder !== 'desc' ? 1 : -1
+      return val1.localeCompare(val2) * order
+    }
+    return compareFn
+  }
 
   const getCities = async () => {
     try {
@@ -164,6 +206,11 @@ export const useCityStore = defineStore('city', () => {
     preEditedCity,
     loading,
     error,
+    filterStr,
+    filteredCities,
+    sortProperty,
+    sortOrder,
+    sortedCities,
     getCities,
     resetCurrentCity,
     setCurrentCity,
