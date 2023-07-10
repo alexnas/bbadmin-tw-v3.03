@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { Icon } from '@iconify/vue'
-import type { ICity } from '@/types'
+import type { CityKeys, ICity } from '@/types'
 import { useCityStore } from '@/stores/city'
 import { useProvinceStore } from '@/stores/province'
 import { useModalStore } from '@/stores/modal'
@@ -10,9 +10,10 @@ import { formatDateTime } from '@/tools/formatDate'
 import { cutText } from '@/tools/formatString'
 import CityForm from '@/components/CityForm.vue'
 import { useItemNameById } from '@/composables/ItemsById'
+import { arrowUpIcon, arrowDownIcon } from '@/constants/icons'
 
 const cityStore = useCityStore()
-const { filteredCities, filterStr } = storeToRefs(cityStore)
+const { filterStr, sortProperty, sortOrder, sortedCities } = storeToRefs(cityStore)
 const modalStore = useModalStore()
 const provinceStore = useProvinceStore()
 const { provinces } = storeToRefs(provinceStore)
@@ -20,6 +21,19 @@ const { provinces } = storeToRefs(provinceStore)
 onMounted(() => {
   cityStore.resetCurrentCity()
 })
+
+const sortIcon = computed(() => {
+  return sortOrder.value === 'asc' ? arrowUpIcon : arrowDownIcon
+})
+
+const handleSort = (property: CityKeys) => {
+  if (sortProperty.value === property) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
+  } else {
+    sortProperty.value = property
+    sortOrder.value = 'asc'
+  }
+}
 
 const handleAddNewClick = () => {
   cityStore.cancelPreEditedCity()
@@ -75,18 +89,60 @@ const handleDeleteClick = async (city: ICity) => {
       >
         <tr>
           <th scope="col" class="px-4 py-3">#</th>
-          <th scope="col" class="px-4 py-3">ID</th>
-          <th scope="col" class="px-4 py-3">Name</th>
-          <th scope="col" class="px-4 py-3">Province</th>
-          <th scope="col" class="px-4 py-3">Description</th>
-          <th scope="col" class="px-4 py-3">Created</th>
-          <th scope="col" class="px-4 py-3">Updated</th>
+          <th
+            scope="col"
+            class="px-4 py-3 hover:bg-teal-100 rounded-lg cursor-pointer whitespace-nowrap"
+            :class="sortProperty === 'id' ? 'text-teal-600' : ''"
+            @click="handleSort('id')"
+          >
+            ID<span class="" v-if="sortProperty === 'id'">{{ sortIcon }}</span>
+          </th>
+          <th
+            scope="col"
+            class="px-4 py-3 hover:bg-teal-100 rounded-lg cursor-pointer whitespace-nowrap"
+            :class="sortProperty === 'name' ? 'text-teal-600' : ''"
+            @click="handleSort('name')"
+          >
+            Name<span class="" v-if="sortProperty === 'name'">{{ sortIcon }}</span>
+          </th>
+          <th
+            scope="col"
+            class="px-4 py-3 hover:bg-teal-100 rounded-lg cursor-pointer whitespace-nowrap"
+            :class="sortProperty === 'provinceId' ? 'text-teal-600' : ''"
+            @click="handleSort('provinceId')"
+          >
+            Province<span class="" v-if="sortProperty === 'provinceId'">{{ sortIcon }}</span>
+          </th>
+          <th
+            scope="col"
+            class="px-4 py-3 hover:bg-teal-100 rounded-lg cursor-pointer whitespace-nowrap"
+            :class="sortProperty === 'description' ? 'text-teal-600' : ''"
+            @click="handleSort('description')"
+          >
+            Description<span class="" v-if="sortProperty === 'description'">{{ sortIcon }}</span>
+          </th>
+          <th
+            scope="col"
+            class="px-4 py-3 hover:bg-teal-100 rounded-lg cursor-pointer whitespace-nowrap"
+            :class="sortProperty === 'createdAt' ? 'text-teal-600' : ''"
+            @click="handleSort('createdAt')"
+          >
+            Created<span class="" v-if="sortProperty === 'createdAt'">{{ sortIcon }}</span>
+          </th>
+          <th
+            scope="col"
+            class="px-4 py-3 hover:bg-teal-100 rounded-lg cursor-pointer whitespace-nowrap"
+            :class="sortProperty === 'updatedAt' ? 'text-teal-600' : ''"
+            @click="handleSort('updatedAt')"
+          >
+            Updated<span class="" v-if="sortProperty === 'updatedAt'">{{ sortIcon }}</span>
+          </th>
           <th scope="col" class="px-4 py-3">Action</th>
         </tr>
       </thead>
       <tbody>
         <tr
-          v-for="(city, idx) in filteredCities"
+          v-for="(city, idx) in sortedCities"
           :key="city.name"
           class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
         >
