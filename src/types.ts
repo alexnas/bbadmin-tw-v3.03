@@ -6,6 +6,13 @@ interface IProvince {
   updatedAt: string
 }
 
+type IProvinceKeys = keyof IProvince
+
+interface IProvinceTableCol {
+  field: IProvinceKeys
+  title: string
+}
+
 interface ICity {
   id: number
   name: string
@@ -84,6 +91,8 @@ interface AuthResponse {
 
 export type {
   IProvince,
+  IProvinceKeys,
+  IProvinceTableCol,
   ICity,
   ICityKeys,
   ICityTableCol,

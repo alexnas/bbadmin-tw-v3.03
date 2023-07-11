@@ -1,7 +1,8 @@
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import type { IProvince } from '@/types'
+import type { IProvince, IProvinceKeys } from '@/types'
+import { makeSortedByProperty } from '@/tools/commonTools'
 import { API_BASE_URL, PROVINCE_ENDPOINT } from '@/constants/apiConstants'
 
 const provinceApi = `${API_BASE_URL}${PROVINCE_ENDPOINT}`
@@ -19,6 +20,26 @@ export const useProvinceStore = defineStore('provinces', () => {
   const preEditedProvince = ref<IProvince>({ ...initProvince })
   const loading = ref<boolean>(false)
   const error = ref<string | null>(null)
+  const sortProperty = ref<IProvinceKeys>('name')
+  const sortOrder = ref<'asc' | 'desc'>('asc')
+  const filterStr = ref<string>('')
+
+  const filteredProvinces = computed(() => {
+    const filtered = provinces.value.filter((item) => {
+      if (filterStr.value.trim() === '') return true
+      const isFound =
+        item.name.toLowerCase().indexOf(filterStr.value.toLowerCase()) >= 0 ||
+        item.description.toLowerCase().indexOf(filterStr.value.toLowerCase()) >= 0
+      return isFound
+    })
+    return filtered
+  })
+
+  const sortedProvinces = computed(() => {
+    const sorted = [...filteredProvinces.value]
+    sorted.sort(makeSortedByProperty(sortProperty.value, sortOrder.value))
+    return sorted
+  })
 
   const getProvinces = async () => {
     try {
@@ -161,6 +182,11 @@ export const useProvinceStore = defineStore('provinces', () => {
     preEditedProvince,
     loading,
     error,
+    filterStr,
+    filteredProvinces,
+    sortProperty,
+    sortOrder,
+    sortedProvinces,
     getProvinces,
     createProvince,
     updateProvince,

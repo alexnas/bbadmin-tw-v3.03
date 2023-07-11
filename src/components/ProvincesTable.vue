@@ -1,21 +1,44 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
-import type { IProvince } from '@/types'
+import type { IProvince, IProvinceKeys, IProvinceTableCol } from '@/types'
 import { useProvinceStore } from '@/stores/province'
 import { useModalStore } from '@/stores/modal'
 import { formatDateTime } from '@/tools/formatDate'
 import { cutText } from '@/tools/formatString'
 import ProvinceForm from '@/components/ProvinceForm.vue'
+import FilterInput from '@/components/FilterInput.vue'
 import AddNewButton from '@/components/AddNewButton.vue'
+import { arrowUpIcon, arrowDownIcon } from '@/constants/icons'
 
 const provinceStore = useProvinceStore()
-const { provinces } = storeToRefs(provinceStore)
+const { filterStr, sortProperty, sortOrder, sortedProvinces } = storeToRefs(provinceStore)
 const modalStore = useModalStore()
 
 onMounted(() => {
   provinceStore.resetCurrentProvince()
 })
+
+const tableCols: IProvinceTableCol[] = [
+  { field: 'id', title: 'ID' },
+  { field: 'name', title: 'NAME' },
+  { field: 'description', title: 'DESCRIPTION' },
+  { field: 'createdAt', title: 'CREATED' },
+  { field: 'updatedAt', title: 'UPDATED' }
+]
+
+const sortIcon = computed(() => {
+  return sortOrder.value === 'asc' ? arrowUpIcon : arrowDownIcon
+})
+
+const handleSort = (property: IProvinceKeys) => {
+  if (sortProperty.value === property) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
+  } else {
+    sortProperty.value = property
+    sortOrder.value = 'asc'
+  }
+}
 
 const handleAddNewClick = () => {
   provinceStore.cancelPreEditedProvince()
@@ -45,7 +68,8 @@ const handleDeleteClick = async (province: IProvince) => {
 </script>
 
 <template>
-  <div class="flex items-center justify-end -mt-6 h-24">
+  <div class="flex items-center justify-between mt-3 mb-2 h-12 max-h-12">
+    <FilterInput v-model="filterStr" />
     <AddNewButton @openAddNew="handleAddNewClick()" />
   </div>
 
@@ -56,17 +80,23 @@ const handleDeleteClick = async (province: IProvince) => {
       >
         <tr>
           <th scope="col" class="px-4 py-3">#</th>
-          <th scope="col" class="px-4 py-3">ID</th>
-          <th scope="col" class="px-4 py-3">Name</th>
-          <th scope="col" class="px-4 py-3">Description</th>
-          <th scope="col" class="px-4 py-3">Created</th>
-          <th scope="col" class="px-4 py-3">Updated</th>
+          <th
+            v-for="({ field, title }, ids) in tableCols"
+            :key="ids"
+            scope="col"
+            class="px-4 py-3 hover:bg-teal-100 rounded-lg cursor-pointer whitespace-nowrap"
+            :class="sortProperty === field ? 'text-teal-600' : ''"
+            @click="handleSort(field)"
+          >
+            {{ title }}
+            <span class="" v-if="sortProperty === field">{{ sortIcon }}</span>
+          </th>
           <th scope="col" class="px-4 py-3">Action</th>
         </tr>
       </thead>
       <tbody>
         <tr
-          v-for="(province, idx) in provinces"
+          v-for="(province, idx) in sortedProvinces"
           :key="province.name"
           class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
         >
