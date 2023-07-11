@@ -1,8 +1,9 @@
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { defineStore, storeToRefs } from 'pinia'
 import axios from 'axios'
-import type { ICompany } from '@/types'
+import type { ICompany, ICompanyKeys } from '@/types'
 import { useImageStore } from '@/stores/image'
+import { makeSortedByProperty } from '@/tools/commonTools'
 import { API_BASE_URL, COMPANY_ENDPOINT } from '@/constants/apiConstants'
 
 const companyApi = `${API_BASE_URL}${COMPANY_ENDPOINT}`
@@ -23,9 +24,30 @@ export const useCompanyStore = defineStore('company', () => {
   const preEditedCompany = ref<ICompany>({ ...initCompany })
   const loading = ref<boolean>(false)
   const error = ref<string | null>(null)
+  const sortProperty = ref<ICompanyKeys>('name')
+  const sortOrder = ref<'asc' | 'desc'>('asc')
+  const filterStr = ref<string>('')
 
   const imageStore = useImageStore()
   const { selectedFile } = storeToRefs(imageStore)
+
+  const filteredCompanies = computed(() => {
+    const filtered = companies.value.filter((item) => {
+      if (filterStr.value.trim() === '') return true
+      const isFound =
+        item.name.toLowerCase().indexOf(filterStr.value.toLowerCase()) >= 0 ||
+        item.fullname.toLowerCase().indexOf(filterStr.value.toLowerCase()) >= 0 ||
+        item.description.toLowerCase().indexOf(filterStr.value.toLowerCase()) >= 0
+      return isFound
+    })
+    return filtered
+  })
+
+  const sortedCompanies = computed(() => {
+    const sorted = [...filteredCompanies.value]
+    sorted.sort(makeSortedByProperty(sortProperty.value, sortOrder.value))
+    return sorted
+  })
 
   const getCompanies = async () => {
     try {
@@ -180,6 +202,11 @@ export const useCompanyStore = defineStore('company', () => {
     preEditedCompany,
     loading,
     error,
+    filterStr,
+    filteredCompanies,
+    sortProperty,
+    sortOrder,
+    sortedCompanies,
     getCompanies,
     createCompany,
     updateCompany,
