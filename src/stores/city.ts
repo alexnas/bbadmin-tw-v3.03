@@ -1,7 +1,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { defineStore, storeToRefs } from 'pinia'
 import axios from 'axios'
-import type { CityKeys, ICity } from '@/types'
+import type { ICityKeys, ICity } from '@/types'
 import { useProvinceStore } from '@/stores/province'
 import { useItemNameById } from '@/composables/ItemsById'
 import { API_BASE_URL, CITY_ENDPOINT } from '@/constants/apiConstants'
@@ -25,7 +25,7 @@ export const useCityStore = defineStore('city', () => {
   const preEditedCity = ref<ICity>({ ...initCity })
   const loading = ref<boolean>(false)
   const error = ref<string | null>(null)
-  const sortProperty = ref<CityKeys>('name')
+  const sortProperty = ref<ICityKeys>('name')
   const sortOrder = ref<'asc' | 'desc'>('asc')
   const filterStr = ref<string>('')
 

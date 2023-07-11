@@ -14,7 +14,12 @@ interface ICity {
   createdAt: string
   updatedAt: string
 }
-type CityKeys = keyof ICity
+type ICityKeys = keyof ICity
+
+interface ICityTableCol {
+  field: ICityKeys
+  title: string
+}
 
 interface ICompany {
   id: number
@@ -70,4 +75,14 @@ interface AuthResponse {
   user: IUser
 }
 
-export type { IProvince, ICity, CityKeys, ICompany, IRoute, IRole, IUser, AuthResponse }
+export type {
+  IProvince,
+  ICity,
+  ICityKeys,
+  ICityTableCol,
+  ICompany,
+  IRoute,
+  IRole,
+  IUser,
+  AuthResponse
+}

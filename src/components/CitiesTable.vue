@@ -2,7 +2,7 @@
 import { computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { Icon } from '@iconify/vue'
-import type { CityKeys, ICity } from '@/types'
+import type { ICity, ICityKeys, ICityTableCol } from '@/types'
 import { useCityStore } from '@/stores/city'
 import { useProvinceStore } from '@/stores/province'
 import { useModalStore } from '@/stores/modal'
@@ -22,11 +22,20 @@ onMounted(() => {
   cityStore.resetCurrentCity()
 })
 
+const tableCols: ICityTableCol[] = [
+  { field: 'id', title: 'ID' },
+  { field: 'name', title: 'NAME' },
+  { field: 'provinceId', title: 'PROVINCE' },
+  { field: 'description', title: 'DESCRIPTION' },
+  { field: 'createdAt', title: 'CREATED' },
+  { field: 'updatedAt', title: 'UPDATED' }
+]
+
 const sortIcon = computed(() => {
   return sortOrder.value === 'asc' ? arrowUpIcon : arrowDownIcon
 })
 
-const handleSort = (property: CityKeys) => {
+const handleSort = (property: ICityKeys) => {
   if (sortProperty.value === property) {
     sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
   } else {
@@ -90,52 +99,15 @@ const handleDeleteClick = async (city: ICity) => {
         <tr>
           <th scope="col" class="px-4 py-3">#</th>
           <th
+            v-for="({ field, title }, ids) in tableCols"
+            :key="ids"
             scope="col"
             class="px-4 py-3 hover:bg-teal-100 rounded-lg cursor-pointer whitespace-nowrap"
-            :class="sortProperty === 'id' ? 'text-teal-600' : ''"
-            @click="handleSort('id')"
+            :class="sortProperty === field ? 'text-teal-600' : ''"
+            @click="handleSort(field)"
           >
-            ID<span class="" v-if="sortProperty === 'id'">{{ sortIcon }}</span>
-          </th>
-          <th
-            scope="col"
-            class="px-4 py-3 hover:bg-teal-100 rounded-lg cursor-pointer whitespace-nowrap"
-            :class="sortProperty === 'name' ? 'text-teal-600' : ''"
-            @click="handleSort('name')"
-          >
-            Name<span class="" v-if="sortProperty === 'name'">{{ sortIcon }}</span>
-          </th>
-          <th
-            scope="col"
-            class="px-4 py-3 hover:bg-teal-100 rounded-lg cursor-pointer whitespace-nowrap"
-            :class="sortProperty === 'provinceId' ? 'text-teal-600' : ''"
-            @click="handleSort('provinceId')"
-          >
-            Province<span class="" v-if="sortProperty === 'provinceId'">{{ sortIcon }}</span>
-          </th>
-          <th
-            scope="col"
-            class="px-4 py-3 hover:bg-teal-100 rounded-lg cursor-pointer whitespace-nowrap"
-            :class="sortProperty === 'description' ? 'text-teal-600' : ''"
-            @click="handleSort('description')"
-          >
-            Description<span class="" v-if="sortProperty === 'description'">{{ sortIcon }}</span>
-          </th>
-          <th
-            scope="col"
-            class="px-4 py-3 hover:bg-teal-100 rounded-lg cursor-pointer whitespace-nowrap"
-            :class="sortProperty === 'createdAt' ? 'text-teal-600' : ''"
-            @click="handleSort('createdAt')"
-          >
-            Created<span class="" v-if="sortProperty === 'createdAt'">{{ sortIcon }}</span>
-          </th>
-          <th
-            scope="col"
-            class="px-4 py-3 hover:bg-teal-100 rounded-lg cursor-pointer whitespace-nowrap"
-            :class="sortProperty === 'updatedAt' ? 'text-teal-600' : ''"
-            @click="handleSort('updatedAt')"
-          >
-            Updated<span class="" v-if="sortProperty === 'updatedAt'">{{ sortIcon }}</span>
+            {{ title }}
+            <span class="" v-if="sortProperty === field">{{ sortIcon }}</span>
           </th>
           <th scope="col" class="px-4 py-3">Action</th>
         </tr>
