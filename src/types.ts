@@ -83,6 +83,13 @@ interface IUser {
   updatedAt: string
 }
 
+type IUserKeys = keyof IUser
+
+interface IUserTableCol {
+  field: IUserKeys
+  title: string
+}
+
 interface IRole {
   id: number
   name: string
@@ -111,5 +118,7 @@ export type {
   IRouteTableCol,
   IRole,
   IUser,
+  IUserKeys,
+  IUserTableCol,
   AuthResponse
 }
