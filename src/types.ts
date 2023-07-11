@@ -6,6 +6,13 @@ interface IProvince {
   updatedAt: string
 }
 
+type IProvinceKeys = keyof IProvince
+
+interface IProvinceTableCol {
+  field: IProvinceKeys
+  title: string
+}
+
 interface ICity {
   id: number
   name: string
@@ -58,6 +65,13 @@ interface IRoute {
   updatedAt: string
 }
 
+type IRouteKeys = keyof IRoute
+
+interface IRouteTableCol {
+  field: IRouteKeys
+  title: string
+}
+
 interface IUser {
   id: number
   name: string
@@ -84,6 +98,8 @@ interface AuthResponse {
 
 export type {
   IProvince,
+  IProvinceKeys,
+  IProvinceTableCol,
   ICity,
   ICityKeys,
   ICityTableCol,
@@ -91,6 +107,8 @@ export type {
   ICompanyKeys,
   ICompanyTableCol,
   IRoute,
+  IRouteKeys,
+  IRouteTableCol,
   IRole,
   IUser,
   AuthResponse
