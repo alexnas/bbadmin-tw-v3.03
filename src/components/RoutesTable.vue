@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
-import { Icon } from '@iconify/vue'
 import type { IRoute } from '@/types'
 import { useRouteStore } from '@/stores/route'
 import { useCompanyStore } from '@/stores/company'
@@ -11,6 +10,7 @@ import { formatDateTime } from '@/tools/formatDate'
 import { cutText } from '@/tools/formatString'
 import RouteForm from '@/components/RouteForm.vue'
 import { useItemNameById } from '@/composables/ItemsById'
+import AddNewButton from '@/components/AddNewButton.vue'
 
 const routeStore = useRouteStore()
 const { routes } = storeToRefs(routeStore)
@@ -53,13 +53,7 @@ const handleDeleteClick = async (route: IRoute) => {
 
 <template>
   <div class="flex items-center justify-end -mt-6 h-24">
-    <button @click.stop="handleAddNewClick()" type="button">
-      <Icon
-        class="text-5xl text-green-400 hover:text-green-500"
-        icon="material-symbols:add-box-outline-rounded"
-        :inline="true"
-      />
-    </button>
+    <AddNewButton @openAddNew="handleAddNewClick()" />
   </div>
 
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">

@@ -9,6 +9,7 @@ import { useModalStore } from '@/stores/modal'
 import { formatDateTime } from '@/tools/formatDate'
 import UserForm from '@/components/UserForm.vue'
 import { useItemNameById } from '@/composables/ItemsById'
+import AddNewButton from '@/components/AddNewButton.vue'
 
 const userStore = useUserStore()
 const { users } = storeToRefs(userStore)
@@ -50,13 +51,7 @@ const handleDeleteClick = async (user: IUser) => {
 
 <template>
   <div class="flex items-center justify-end -mt-6 h-24">
-    <button @click.stop="handleAddNewClick()" type="button">
-      <Icon
-        class="text-5xl text-green-400 hover:text-green-500"
-        icon="material-symbols:add-box-outline-rounded"
-        :inline="true"
-      />
-    </button>
+    <AddNewButton @openAddNew="handleAddNewClick()" />
   </div>
 
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">

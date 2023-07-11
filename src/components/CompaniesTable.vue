@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
-import { Icon } from '@iconify/vue'
 import { useCompanyStore } from '@/stores/company'
 import type { ICompany } from '@/types'
 import { useModalStore } from '@/stores/modal'
 import { formatDateTime } from '@/tools/formatDate'
 import { cutText } from '@/tools/formatString'
 import CompanyForm from '@/components/CompanyForm.vue'
+import AddNewButton from '@/components/AddNewButton.vue'
 
 const companyStore = useCompanyStore()
 const { companies } = storeToRefs(companyStore)
@@ -46,13 +46,7 @@ const handleDeleteClick = async (company: ICompany) => {
 
 <template>
   <div class="flex items-center justify-end -mt-6 h-24">
-    <button @click.stop="handleAddNewClick()" type="button">
-      <Icon
-        class="text-5xl text-green-400 hover:text-green-500"
-        icon="material-symbols:add-box-outline-rounded"
-        :inline="true"
-      />
-    </button>
+    <AddNewButton @openAddNew="handleAddNewClick()" />
   </div>
 
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
