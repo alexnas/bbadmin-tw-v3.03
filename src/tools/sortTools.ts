@@ -1,4 +1,4 @@
-import type { ICompany, IRoute, ICity } from '@/types'
+import type { ICompany, IRoute, ICity, IUser, IRole } from '@/types'
 import { useItemNameById } from '@/composables/ItemsById'
 
 export function sortedByCompanyId(
@@ -77,6 +77,16 @@ export function sortedByTime(sortProperty: keyof IRoute, sortOrder: 'asc' | 'des
     const val2 = new Date('1970-01-01T' + b[sortProperty]).getTime()
     const order = sortOrder !== 'desc' ? 1 : -1
     return (val1 - val2) * order
+  }
+  return compareFn
+}
+
+export function sortedByRole(sortProperty: keyof IUser, sortOrder: 'asc' | 'desc', roles: IRole[]) {
+  const compareFn = (a: IUser, b: IUser) => {
+    const val1 = useItemNameById(a.roleId, roles)
+    const val2 = useItemNameById(b.roleId, roles)
+    const order = sortOrder !== 'desc' ? 1 : -1
+    return val1.localeCompare(val2) * order
   }
   return compareFn
 }

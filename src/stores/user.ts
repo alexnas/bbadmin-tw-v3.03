@@ -1,9 +1,12 @@
-import { ref } from 'vue'
-import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
+import { defineStore, storeToRefs } from 'pinia'
 import axios from 'axios'
-import type { IUser } from '@/types'
-import { API_BASE_URL, USER_ENDPOINT } from '@/constants/apiConstants'
+import type { IUser, IUserKeys } from '@/types'
+import { useRoleStore } from '@/stores/role'
+import { makeSortedByProperty } from '@/tools/commonTools'
 import UserService from '@/services/UserService'
+import { API_BASE_URL, USER_ENDPOINT } from '@/constants/apiConstants'
+import { sortedByRole } from '@/tools/sortTools'
 
 const userApi = `${API_BASE_URL}${USER_ENDPOINT}`
 export const initUser: IUser = {
@@ -18,11 +21,38 @@ export const initUser: IUser = {
 }
 
 export const useUserStore = defineStore('user', () => {
+  const roleStore = useRoleStore()
+  const { roles } = storeToRefs(roleStore)
   const users = ref<IUser[]>([])
   const currentUser = ref<IUser>({ ...initUser })
   const preEditedUser = ref<IUser>({ ...initUser })
   const loading = ref<boolean>(false)
   const error = ref<string | null>(null)
+  const sortProperty = ref<IUserKeys>('name')
+  const sortOrder = ref<'asc' | 'desc'>('asc')
+  const filterStr = ref<string>('')
+
+  const filteredUsers = computed(() => {
+    const filtered = users.value.filter((item) => {
+      if (filterStr.value.trim() === '') return true
+      const isFound =
+        item.name.toLowerCase().indexOf(filterStr.value.toLowerCase()) >= 0 ||
+        item.email.toLowerCase().indexOf(filterStr.value.toLowerCase()) >= 0
+      return isFound
+    })
+    return filtered
+  })
+
+  const sortedUsers = computed(() => {
+    const sorted = [...filteredUsers.value]
+
+    if (sortProperty.value === 'roleId') {
+      sorted.sort(sortedByRole(sortProperty.value, sortOrder.value, roles.value))
+    } else {
+      sorted.sort(makeSortedByProperty(sortProperty.value, sortOrder.value))
+    }
+    return sorted
+  })
 
   const getUsers = async () => {
     try {
@@ -154,6 +184,11 @@ export const useUserStore = defineStore('user', () => {
     preEditedUser,
     loading,
     error,
+    filterStr,
+    filteredUsers,
+    sortProperty,
+    sortOrder,
+    sortedUsers,
     getUsers,
     resetCurrentUser,
     setCurrentUser,

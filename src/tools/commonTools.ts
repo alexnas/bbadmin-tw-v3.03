@@ -18,7 +18,13 @@ export function makeSortedByProperty<T extends Object>(
         const result = val1.localeCompare(valb)
         return result * order
       }
-      // add other cases like boolean, etc.
+      case 'boolean': {
+        const vala = Number(val1)
+        const valb = val2 as number
+        const result = vala - valb
+        return result * order
+      }
+
       default:
         return 0
     }

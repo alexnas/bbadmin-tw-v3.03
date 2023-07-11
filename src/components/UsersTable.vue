@@ -1,18 +1,20 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { Icon } from '@iconify/vue'
-import type { IUser } from '@/types'
+import type { IUser, IUserKeys, IUserTableCol } from '@/types'
 import { useUserStore } from '@/stores/user'
 import { useRoleStore } from '@/stores/role'
 import { useModalStore } from '@/stores/modal'
 import { formatDateTime } from '@/tools/formatDate'
 import UserForm from '@/components/UserForm.vue'
 import { useItemNameById } from '@/composables/ItemsById'
+import FilterInput from '@/components/FilterInput.vue'
 import AddNewButton from '@/components/AddNewButton.vue'
+import { arrowUpIcon, arrowDownIcon } from '@/constants/icons'
 
 const userStore = useUserStore()
-const { users } = storeToRefs(userStore)
+const { filterStr, sortProperty, sortOrder, sortedUsers } = storeToRefs(userStore)
 const modalStore = useModalStore()
 const roleStore = useRoleStore()
 const { roles } = storeToRefs(roleStore)
@@ -21,6 +23,29 @@ onMounted(() => {
   userStore.getUsers()
   userStore.resetCurrentUser()
 })
+
+const tableCols: IUserTableCol[] = [
+  { field: 'id', title: 'ID' },
+  { field: 'isActive', title: 'ON' },
+  { field: 'name', title: 'NAME' },
+  { field: 'email', title: 'EMAIL' },
+  { field: 'roleId', title: 'ROLE' },
+  { field: 'createdAt', title: 'CREATED' },
+  { field: 'updatedAt', title: 'UPDATED' }
+]
+
+const sortIcon = computed(() => {
+  return sortOrder.value === 'asc' ? arrowUpIcon : arrowDownIcon
+})
+
+const handleSort = (property: IUserKeys) => {
+  if (sortProperty.value === property) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
+  } else {
+    sortProperty.value = property
+    sortOrder.value = 'asc'
+  }
+}
 
 const handleAddNewClick = () => {
   userStore.cancelPreEditedUser()
@@ -50,7 +75,8 @@ const handleDeleteClick = async (user: IUser) => {
 </script>
 
 <template>
-  <div class="flex items-center justify-end -mt-6 h-24">
+  <div class="flex items-center justify-between mt-3 mb-2 h-12 max-h-12">
+    <FilterInput v-model="filterStr" />
     <AddNewButton @openAddNew="handleAddNewClick()" />
   </div>
 
@@ -61,20 +87,24 @@ const handleDeleteClick = async (user: IUser) => {
       >
         <tr>
           <th scope="col" class="px-4 py-3">#</th>
-          <th scope="col" class="px-4 py-3">ID</th>
-          <th scope="col" class="px-4 py-3">On</th>
-          <th scope="col" class="px-4 py-3">Name</th>
-          <th scope="col" class="px-4 py-3">Email</th>
-          <th scope="col" class="px-4 py-3">Role</th>
-          <th scope="col" class="px-4 py-3">Created</th>
-          <th scope="col" class="px-4 py-3">Updated</th>
+          <th
+            v-for="({ field, title }, ids) in tableCols"
+            :key="ids"
+            scope="col"
+            class="px-4 py-3 hover:bg-teal-100 rounded-lg cursor-pointer whitespace-nowrap"
+            :class="sortProperty === field ? 'text-teal-600' : ''"
+            @click="handleSort(field)"
+          >
+            {{ title }}
+            <span class="" v-if="sortProperty === field">{{ sortIcon }}</span>
+          </th>
           <th scope="col" class="px-4 py-3">Action</th>
         </tr>
       </thead>
       <tbody>
         <tr
-          v-for="(user, idx) in users"
-          :key="user.name"
+          v-for="(user, idx) in sortedUsers"
+          :key="user.id"
           class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
         >
           <td class="px-4 py-3">{{ idx + 1 }}</td>
