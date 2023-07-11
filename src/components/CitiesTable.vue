@@ -10,6 +10,7 @@ import { formatDateTime } from '@/tools/formatDate'
 import { cutText } from '@/tools/formatString'
 import CityForm from '@/components/CityForm.vue'
 import { useItemNameById } from '@/composables/ItemsById'
+import FilterInput from '@/components/FilterInput.vue'
 import { arrowUpIcon, arrowDownIcon } from '@/constants/icons'
 
 const cityStore = useCityStore()
@@ -72,15 +73,8 @@ const handleDeleteClick = async (city: ICity) => {
 </script>
 
 <template>
-  <div class="flex items-center justify-between mt-1 h-24">
-    <div class="flex">
-      <input
-        type="text"
-        v-model="filterStr"
-        class="mb- max-w-xs text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-        placeholder="Search pattern"
-      />
-    </div>
+  <div class="flex items-center justify-between mt-3 mb-2 h-12 max-h-12">
+    <FilterInput v-model="filterStr" />
 
     <button @click.stop="handleAddNewClick()" type="button">
       <Icon
