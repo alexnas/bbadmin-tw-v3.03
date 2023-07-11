@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
-import type { IRoute } from '@/types'
+import type { IRoute, IRouteKeys, IRouteTableCol } from '@/types'
 import { useRouteStore } from '@/stores/route'
 import { useCompanyStore } from '@/stores/company'
 import { useCityStore } from '@/stores/city'
@@ -10,10 +10,12 @@ import { formatDateTime } from '@/tools/formatDate'
 import { cutText } from '@/tools/formatString'
 import RouteForm from '@/components/RouteForm.vue'
 import { useItemNameById } from '@/composables/ItemsById'
+import FilterInput from '@/components/FilterInput.vue'
 import AddNewButton from '@/components/AddNewButton.vue'
+import { arrowUpIcon, arrowDownIcon } from '@/constants/icons'
 
 const routeStore = useRouteStore()
-const { routes } = storeToRefs(routeStore)
+const { filterStr, sortProperty, sortOrder, sortedRoutes } = storeToRefs(routeStore)
 const modalStore = useModalStore()
 const companyStore = useCompanyStore()
 const { companies } = storeToRefs(companyStore)
@@ -23,6 +25,35 @@ const { cities } = storeToRefs(cityStore)
 onMounted(() => {
   routeStore.resetCurrentRoute()
 })
+
+const tableCols: IRouteTableCol[] = [
+  { field: 'id', title: 'ID' },
+  { field: 'name', title: 'NAME' },
+  { field: 'companyId', title: 'COMPANY' },
+  { field: 'startCityId', title: 'FROM' },
+  { field: 'endCityId', title: 'TO' },
+  { field: 'viaCityId', title: 'VIA' },
+  { field: 'start_time', title: 'START' },
+  { field: 'end_time', title: 'END' },
+  { field: 'price', title: 'PRICE' },
+  { field: 'distance', title: 'DIST' },
+  { field: 'description', title: 'DESCRIPTION' },
+  { field: 'createdAt', title: 'CREATED' },
+  { field: 'updatedAt', title: 'UPDATED' }
+]
+
+const sortIcon = computed(() => {
+  return sortOrder.value === 'asc' ? arrowUpIcon : arrowDownIcon
+})
+
+const handleSort = (property: IRouteKeys) => {
+  if (sortProperty.value === property) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
+  } else {
+    sortProperty.value = property
+    sortOrder.value = 'asc'
+  }
+}
 
 const handleAddNewClick = () => {
   routeStore.cancelPreEditedRoute()
@@ -52,7 +83,8 @@ const handleDeleteClick = async (route: IRoute) => {
 </script>
 
 <template>
-  <div class="flex items-center justify-end -mt-6 h-24">
+  <div class="flex items-center justify-between mt-3 mb-2 h-12 max-h-12">
+    <FilterInput v-model="filterStr" />
     <AddNewButton @openAddNew="handleAddNewClick()" />
   </div>
 
@@ -63,44 +95,45 @@ const handleDeleteClick = async (route: IRoute) => {
       >
         <tr>
           <th scope="col" class="px-4 py-3">#</th>
-          <th scope="col" class="px-4 py-3">ID</th>
-          <th scope="col" class="px-4 py-3">Name</th>
-
-          <th scope="col" class="px-4 py-3">Company</th>
-
-          <th scope="col" class="px-4 py-3">From</th>
-          <th scope="col" class="px-4 py-3">To</th>
-          <th scope="col" class="px-4 py-3">Via</th>
-
-          <th scope="col" class="px-4 py-3">Start</th>
-          <th scope="col" class="px-4 py-3">End</th>
-
-          <th scope="col" class="px-4 py-3">Price</th>
-          <th scope="col" class="px-4 py-3">Distance</th>
-
-          <th scope="col" class="px-4 py-3">Description</th>
-          <th scope="col" class="px-4 py-3">Created</th>
-          <th scope="col" class="px-4 py-3">Updated</th>
+          <th
+            v-for="({ field, title }, ids) in tableCols"
+            :key="ids"
+            scope="col"
+            class="px-4 py-3 hover:bg-teal-100 rounded-lg cursor-pointer whitespace-nowrap"
+            :class="sortProperty === field ? 'text-teal-600' : ''"
+            @click="handleSort(field)"
+          >
+            {{ title }}
+            <span class="" v-if="sortProperty === field">{{ sortIcon }}</span>
+          </th>
           <th scope="col" class="px-4 py-3">Action</th>
         </tr>
       </thead>
       <tbody>
         <tr
-          v-for="(route, idx) in routes"
+          v-for="(route, idx) in sortedRoutes"
           :key="route.name"
           class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
         >
           <td class="px-4 py-3">{{ idx + 1 }}</td>
           <td class="px-4 py-3">{{ route.id }}</td>
           <td class="px-4 py-3">{{ route.name }}</td>
-          <td class="px-4 py-3">{{ useItemNameById(route.companyId, companies) }}</td>
+          <td class="px-4 py-3">
+            {{ useItemNameById(route.companyId, companies) }}
+          </td>
 
-          <td class="px-4 py-3">{{ useItemNameById(route.startCityId, cities) }}</td>
-          <td class="px-4 py-3">{{ useItemNameById(route.endCityId, cities) }}</td>
-          <td class="px-4 py-3">{{ useItemNameById(route.viaCityId, cities) }}</td>
+          <td class="px-4 py-3">
+            {{ useItemNameById(route.startCityId, cities) }}
+          </td>
+          <td class="px-4 py-3">
+            {{ useItemNameById(route.endCityId, cities) }}
+          </td>
+          <td class="px-4 py-3">
+            {{ useItemNameById(route.viaCityId, cities) }}
+          </td>
 
           <td class="px-4 py-3">{{ route.start_time }}</td>
-          <td class="px-4 py-3">{{ route.start_time }}</td>
+          <td class="px-4 py-3">{{ route.end_time }}</td>
 
           <td class="px-4 py-3">{{ route.price }}</td>
           <td class="px-4 py-3">{{ route.distance }}</td>

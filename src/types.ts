@@ -65,6 +65,13 @@ interface IRoute {
   updatedAt: string
 }
 
+type IRouteKeys = keyof IRoute
+
+interface IRouteTableCol {
+  field: IRouteKeys
+  title: string
+}
+
 interface IUser {
   id: number
   name: string
@@ -100,6 +107,8 @@ export type {
   ICompanyKeys,
   ICompanyTableCol,
   IRoute,
+  IRouteKeys,
+  IRouteTableCol,
   IRole,
   IUser,
   AuthResponse

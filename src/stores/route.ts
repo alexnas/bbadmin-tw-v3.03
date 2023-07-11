@@ -1,10 +1,20 @@
 import { onMounted, ref, computed } from 'vue'
 import { defineStore, storeToRefs } from 'pinia'
 import axios from 'axios'
-import type { IRoute } from '@/types'
+import type { IRoute, IRouteKeys } from '@/types'
 import { useCityStore } from '@/stores/city'
-import { API_BASE_URL, ROUTE_ENDPOINT } from '@/constants/apiConstants'
+import { useCompanyStore } from '@/stores/company'
 import { useItemNameById } from '@/composables/ItemsById'
+import { makeSortedByProperty } from '@/tools/commonTools'
+import { API_BASE_URL, ROUTE_ENDPOINT } from '@/constants/apiConstants'
+import {
+  sortedByCompanyId,
+  sortedByStartCityId,
+  sortedByEndCityId,
+  sortedByViaCityId,
+  sortedByPrice,
+  sortedByTime
+} from '@/tools/sortTools'
 
 const routeApi = `${API_BASE_URL}${ROUTE_ENDPOINT}`
 const initRoute: IRoute = {
@@ -27,16 +37,20 @@ const initRoute: IRoute = {
 }
 
 export const useRouteStore = defineStore('route', () => {
+  const cityStore = useCityStore()
+  const { cities } = storeToRefs(cityStore)
+  const companyStore = useCompanyStore()
+  const { companies } = storeToRefs(companyStore)
   const routes = ref<IRoute[]>([])
   const currentRoute = ref<IRoute>({ ...initRoute })
   const preEditedRoute = ref<IRoute>({ ...initRoute })
   const loading = ref<boolean>(false)
   const error = ref<string | null>(null)
+  const sortProperty = ref<IRouteKeys>('name')
+  const sortOrder = ref<'asc' | 'desc'>('asc')
+  const filterStr = ref<string>('')
 
   const routeName = computed(() => {
-    const cityStore = useCityStore()
-    const { cities } = storeToRefs(cityStore)
-
     const startCityName = useItemNameById(currentRoute.value.startCityId, cities.value)
     const endCityName = useItemNameById(currentRoute.value.endCityId, cities.value)
     const viaCityName = useItemNameById(currentRoute.value.viaCityId, cities.value)
@@ -48,6 +62,50 @@ export const useRouteStore = defineStore('route', () => {
     }
 
     return `${startCityName}${via}${endCityName}`
+  })
+
+  const filteredRoutes = computed(() => {
+    const filtered = routes.value.filter((item) => {
+      if (filterStr.value.trim() === '') return true
+      const isFound =
+        item.name.toLowerCase().indexOf(filterStr.value.toLowerCase()) >= 0 ||
+        item.description.toLowerCase().indexOf(filterStr.value.toLowerCase()) >= 0 ||
+        useItemNameById(item.companyId, companies.value)
+          .toLowerCase()
+          .indexOf(filterStr.value.toLowerCase()) >= 0 ||
+        useItemNameById(item.startCityId, cities.value)
+          .toLowerCase()
+          .indexOf(filterStr.value.toLowerCase()) >= 0 ||
+        useItemNameById(item.endCityId, cities.value)
+          .toLowerCase()
+          .indexOf(filterStr.value.toLowerCase()) >= 0 ||
+        useItemNameById(item.viaCityId, cities.value)
+          .toLowerCase()
+          .indexOf(filterStr.value.toLowerCase()) >= 0
+
+      return isFound
+    })
+    return filtered
+  })
+
+  const sortedRoutes = computed(() => {
+    const sorted = [...filteredRoutes.value]
+    if (sortProperty.value === 'companyId') {
+      sorted.sort(sortedByCompanyId(sortProperty.value, sortOrder.value, companies.value))
+    } else if (sortProperty.value === 'startCityId') {
+      sorted.sort(sortedByStartCityId(sortProperty.value, sortOrder.value, cities.value))
+    } else if (sortProperty.value === 'endCityId') {
+      sorted.sort(sortedByEndCityId(sortProperty.value, sortOrder.value, cities.value))
+    } else if (sortProperty.value === 'viaCityId') {
+      sorted.sort(sortedByViaCityId(sortProperty.value, sortOrder.value, cities.value))
+    } else if (sortProperty.value === 'price') {
+      sorted.sort(sortedByPrice(sortProperty.value, sortOrder.value))
+    } else if (sortProperty.value === 'start_time' || sortProperty.value === 'end_time') {
+      sorted.sort(sortedByTime(sortProperty.value, sortOrder.value))
+    } else {
+      sorted.sort(makeSortedByProperty(sortProperty.value, sortOrder.value))
+    }
+    return sorted
   })
 
   const getRoutes = async () => {
@@ -187,6 +245,11 @@ export const useRouteStore = defineStore('route', () => {
     preEditedRoute,
     loading,
     error,
+    filterStr,
+    filteredRoutes,
+    sortProperty,
+    sortOrder,
+    sortedRoutes,
     getRoutes,
     resetCurrentRoute,
     setCurrentRoute,
