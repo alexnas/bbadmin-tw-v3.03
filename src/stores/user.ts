@@ -45,7 +45,6 @@ export const useUserStore = defineStore('user', () => {
 
   const sortedUsers = computed(() => {
     const sorted = [...filteredUsers.value]
-
     if (sortProperty.value === 'roleId') {
       sorted.sort(sortedByRole(sortProperty.value, sortOrder.value, roles.value))
     } else {
