@@ -32,6 +32,13 @@ interface ICompany {
   updatedAt: string
 }
 
+type ICompanyKeys = keyof ICompany
+
+interface ICompanyTableCol {
+  field: ICompanyKeys
+  title: string
+}
+
 interface IRoute {
   id: number
   name: string
@@ -81,6 +88,8 @@ export type {
   ICityKeys,
   ICityTableCol,
   ICompany,
+  ICompanyKeys,
+  ICompanyTableCol,
   IRoute,
   IRole,
   IUser,

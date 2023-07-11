@@ -1,21 +1,47 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
+import type { ICompany, ICompanyKeys, ICompanyTableCol } from '@/types'
 import { useCompanyStore } from '@/stores/company'
-import type { ICompany } from '@/types'
 import { useModalStore } from '@/stores/modal'
 import { formatDateTime } from '@/tools/formatDate'
 import { cutText } from '@/tools/formatString'
 import CompanyForm from '@/components/CompanyForm.vue'
+import FilterInput from '@/components/FilterInput.vue'
 import AddNewButton from '@/components/AddNewButton.vue'
+import { arrowUpIcon, arrowDownIcon } from '@/constants/icons'
 
 const companyStore = useCompanyStore()
-const { companies } = storeToRefs(companyStore)
+const { filterStr, sortProperty, sortOrder, sortedCompanies } = storeToRefs(companyStore)
 const modalStore = useModalStore()
 
 onMounted(() => {
   companyStore.resetCurrentCompany()
 })
+
+const tableCols: ICompanyTableCol[] = [
+  { field: 'id', title: 'ID' },
+  { field: 'logo', title: 'LOGO' },
+  { field: 'name', title: 'NAME' },
+  { field: 'fullname', title: 'FULLNAME' },
+  { field: 'rating', title: 'RAING' },
+  { field: 'description', title: 'DESCRIPTION' },
+  { field: 'createdAt', title: 'CREATED' },
+  { field: 'updatedAt', title: 'UPDATED' }
+]
+
+const sortIcon = computed(() => {
+  return sortOrder.value === 'asc' ? arrowUpIcon : arrowDownIcon
+})
+
+const handleSort = (property: ICompanyKeys) => {
+  if (sortProperty.value === property) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
+  } else {
+    sortProperty.value = property
+    sortOrder.value = 'asc'
+  }
+}
 
 const handleAddNewClick = () => {
   companyStore.cancelPreEditedCompany()
@@ -45,7 +71,8 @@ const handleDeleteClick = async (company: ICompany) => {
 </script>
 
 <template>
-  <div class="flex items-center justify-end -mt-6 h-24">
+  <div class="flex items-center justify-between mt-3 mb-2 h-12 max-h-12">
+    <FilterInput v-model="filterStr" />
     <AddNewButton @openAddNew="handleAddNewClick()" />
   </div>
 
@@ -56,20 +83,23 @@ const handleDeleteClick = async (company: ICompany) => {
       >
         <tr>
           <th scope="col" class="px-4 py-3">#</th>
-          <th scope="col" class="px-4 py-3">ID</th>
-          <th scope="col" class="px-4 py-3">Logo</th>
-          <th scope="col" class="px-4 py-3">Name</th>
-          <th scope="col" class="px-4 py-3">Fullname</th>
-          <th scope="col" class="px-4 py-3">Rating</th>
-          <th scope="col" class="px-4 py-3">Description</th>
-          <th scope="col" class="px-4 py-3">Created</th>
-          <th scope="col" class="px-4 py-3">Updated</th>
+          <th
+            v-for="({ field, title }, ids) in tableCols"
+            :key="ids"
+            scope="col"
+            class="px-4 py-3 hover:bg-teal-100 rounded-lg cursor-pointer whitespace-nowrap"
+            :class="sortProperty === field ? 'text-teal-600' : ''"
+            @click="handleSort(field)"
+          >
+            {{ title }}
+            <span class="" v-if="sortProperty === field">{{ sortIcon }}</span>
+          </th>
           <th scope="col" class="px-4 py-3">Action</th>
         </tr>
       </thead>
       <tbody>
         <tr
-          v-for="(company, idx) in companies"
+          v-for="(company, idx) in sortedCompanies"
           :key="company.name"
           class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
         >
