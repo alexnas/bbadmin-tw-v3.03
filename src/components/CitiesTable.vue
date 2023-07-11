@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
-import { Icon } from '@iconify/vue'
 import type { ICity, ICityKeys, ICityTableCol } from '@/types'
 import { useCityStore } from '@/stores/city'
 import { useProvinceStore } from '@/stores/province'
@@ -11,6 +10,7 @@ import { cutText } from '@/tools/formatString'
 import CityForm from '@/components/CityForm.vue'
 import { useItemNameById } from '@/composables/ItemsById'
 import FilterInput from '@/components/FilterInput.vue'
+import AddNewButton from '@/components/AddNewButton.vue'
 import { arrowUpIcon, arrowDownIcon } from '@/constants/icons'
 
 const cityStore = useCityStore()
@@ -75,14 +75,7 @@ const handleDeleteClick = async (city: ICity) => {
 <template>
   <div class="flex items-center justify-between mt-3 mb-2 h-12 max-h-12">
     <FilterInput v-model="filterStr" />
-
-    <button @click.stop="handleAddNewClick()" type="button">
-      <Icon
-        class="text-5xl text-green-400 hover:text-green-500"
-        icon="material-symbols:add-box-outline-rounded"
-        :inline="true"
-      />
-    </button>
+    <AddNewButton @openAddNew="handleAddNewClick()" />
   </div>
 
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
